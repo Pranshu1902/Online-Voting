@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Online Voting Platform | Pranshu Aggarwal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+      integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body class="bg-gradient-to-tl from-gray-200 to-green-500 h-full w-full">
+    <div class="flex justify-center text-blue-800">
+      <%- include ('header') %>
+    </div>
+    <div class="flex flex-col justify-center items-center p-4">
+      <div class="flex flex-col justify-center md:w-2/5 w-full">
+        <div class="flex justify-between">
+          <div class="flex justify-center items-center gap-2">
+            <i class="fa fa-user flex items-center justify-center"></i>
+            <p class="font-semibold text-xl flex items-center justify-center">
+              <%= username %>
+            </p>
+          </div>
+          <a
+            class="text-red-500 hover:bg-red-200 transition duration-200 border-2 border-red-500 p-2 rounded-lg font-bold"
+            href="/signout"
+            >Sign Out</a
+          >
+        </div>
+        <div class="pt-6">
+          <p class="font-bold text-2xl underline">Your Elections</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
