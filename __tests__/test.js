@@ -15,7 +15,7 @@ const login = async () => {
 describe("first", () => {
   beforeAll(async () => {
     await db.sequelize.sync({ force: true });
-    server = app.listen(3000, () => {});
+    server = app.listen(5000, () => {});
     agent = request.agent(server);
   });
 
@@ -75,6 +75,19 @@ describe("first", () => {
 
     expect(res.statusCode).toBe(200);
   });
+
+  // test("edit election", async () => {
+  //   let count;
+  //   const response = await agent.get("/election");
+  //   count = response.body.elections.length;
+
+  //   const electionID = response.body.elections[count - 1].id;
+
+  //   const res = await agent
+  //     .put(`/election/${electionID}`)
+  //     .send({ name: "New Name" });
+  //   expect(res.statusCode).toBe(200);
+  // });
 
   test("signout admin", async () => {
     login();

@@ -173,6 +173,40 @@ app.get(
   }
 );
 
+// edit election frontend
+app.get(
+  "/election/:id/edit",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const loggedInAdminID = request.user.id;
+    const election = await Election.findByPk(request.params.id);
+    const admin = await Admin.findByPk(loggedInAdminID);
+
+    response.render("editElection", {
+      election: election,
+      username: admin.name,
+    });
+  }
+);
+
+app.put(
+  "/election/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    console.log("found");
+    try {
+      await Election.update(
+        { name: request.body.name },
+        { where: { id: request.params.id } }
+      );
+      response.redirect("/home");
+    } catch (error) {
+      console.log(error);
+      return response.send(error);
+    }
+  }
+);
+
 // create new admin user
 app.post("/users", async (request, response) => {
   // hasing the password
