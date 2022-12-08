@@ -33,7 +33,7 @@
         <hr />
         <a href="/election/<%= election.id %>" class="font-bold text-4xl hover:underline"
           ><%= election.name %></a
-        >        
+        >
         <div class="flex gap-2 pt-6">
             <p class="flex items-center text-gray-600">Question:</p>
             <p class="text-2xl"><%= question.title %></p>
@@ -43,7 +43,7 @@
             <p class="text-xl"><%= question.description %></p>
         </div>
         <!-- Add new option -->
-        <p class="text-gray-600 text-xl pt-6">Add Option</p>
+        <p class="text-black text-xl pt-6">Add Option</p>
         <div>
           <form
             action="/election/<%= election.id %>/question/<%= question.id %>/options/add"
