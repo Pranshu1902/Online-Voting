@@ -2,7 +2,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const { Admin, Election, question } = require("./models");
+const { Admin, Election, question, Option } = require("./models");
 const bcrypt = require("bcrypt");
 var cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -301,6 +301,35 @@ app.delete(
       console.log(error);
       return response.send(error);
     }
+  }
+);
+
+// questions home page with all options
+app.get(
+  "/election/:id/question/:questiondID",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+    const admin = await Admin.findByPk(adminID);
+    const election = await Election.findByPk(request.params.id);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    const Question = await question.findByPk(request.params.questiondID);
+
+    const options = await Option.findAll({
+      where: { questionID: request.params.questiondID },
+    });
+
+    response.render("questionHome", {
+      username: admin.name,
+      question: Question,
+      election: election,
+      options: options,
+    });
   }
 );
 
