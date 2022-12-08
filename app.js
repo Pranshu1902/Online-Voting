@@ -2,7 +2,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const { Admin } = require("./models");
+const { Admin, Election } = require("./models");
 const bcrypt = require("bcrypt");
 var cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -102,9 +102,63 @@ app.get(
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     const loggedInAdminID = request.user.id;
-
     const admin = await Admin.findByPk(loggedInAdminID);
-    response.render("adminHome", { username: admin.name });
+
+    const elections = await Election.findAll({
+      where: { adminID: request.user.id },
+    });
+
+    response.render("adminHome", {
+      username: admin.name,
+      elections: elections,
+    });
+  }
+);
+
+app.delete(
+  "/election/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    console.log("found");
+    try {
+      await Election.destroy({ where: { id: request.params.id } });
+      return response.json({ ok: true });
+    } catch (error) {
+      console.log(error);
+      response.send(error);
+    }
+  }
+);
+
+// create new election
+app.post(
+  "/election",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    if (!request.body.name) {
+      return response.flash("error", "Election name can't be empty");
+    }
+
+    const loggedInAdminID = request.user.id;
+    try {
+      await Election.add(loggedInAdminID, request.body.name);
+      response.redirect("/home");
+    } catch (error) {
+      console.log(error);
+      response.send(error);
+    }
+  }
+);
+
+// create new election frontend
+app.get(
+  "/election/new",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const loggedInAdminID = request.user.id;
+    const admin = await Admin.findByPk(loggedInAdminID);
+
+    response.render("newElection", { username: admin.name });
   }
 );
 

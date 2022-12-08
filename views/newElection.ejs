@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Online Voting Platform | Pranshu Aggarwal</title>
+    <title>New Election | Online Voting Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -29,17 +29,32 @@
             >Sign Out</a
           >
         </div>
-        <div class="pt-6 flex justify-between">
-          <p class="font-bold text-2xl underline">Your Elections</p>
-          <a
-            href="/election/new"
-            class="bg-blue-500 hover:bg-blue-600 rounded-lg p-2 text-white"
-          >
-            <i class="fa fa-plus"></i> New Election
-          </a>
+        <hr class="mt-2" />
+        <div class="pt-6">
+          <p class="font-bold text-3xl">New Election</p>
+          <div class="flex justify-center">
+            <form
+              action="/election"
+              method="post"
+              class="pt-8 flex flex-col gap-4 justify-center items-center"
+            >
+              <div class="flex flex-col w-full">
+                <label for="name">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  class="border-2 border-black p-2 rounded-lg"
+                />
+              </div>
+              <button
+                type="submit"
+                class="bg-blue-700 hover:bg-blue-600 font-bold text-white p-2 rounded-lg flex justify-center px-6"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
         </div>
-        <!-- List of Elections -->
-        <div><%- include ('elections.ejs') %></div>
       </div>
     </div>
   </body>
