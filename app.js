@@ -127,6 +127,21 @@ app.get(
   }
 );
 
+app.get(
+  "/election/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const loggedInAdminID = request.user.id;
+    const admin = await Admin.findByPk(loggedInAdminID);
+    const elections = await Election.findByPk(request.params.id);
+
+    response.render("electionHome", {
+      election: elections,
+      username: admin.name,
+    });
+  }
+);
+
 app.delete(
   "/election/:id",
   connectEnsureLogin.ensureLoggedIn(),
@@ -163,7 +178,7 @@ app.post(
 
 // create new election frontend
 app.get(
-  "/election/new",
+  "/elections/new",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     const loggedInAdminID = request.user.id;
