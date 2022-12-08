@@ -325,6 +325,11 @@ app.delete(
     }
 
     try {
+      // deleting all options of that question
+      await Option.destroy({
+        where: { questionID: request.params.questiondID },
+      });
+      // delete question
       await question.destroy({ where: { id: request.params.questiondID } });
       return response.json({ ok: true });
     } catch (error) {
