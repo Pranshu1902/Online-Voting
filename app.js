@@ -2,7 +2,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const { Admin, Election } = require("./models");
+const { Admin, Election, question } = require("./models");
 const bcrypt = require("bcrypt");
 var cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -127,6 +127,7 @@ app.get(
   }
 );
 
+// election home page
 app.get(
   "/election/:id",
   connectEnsureLogin.ensureLoggedIn(),
@@ -135,9 +136,14 @@ app.get(
     const admin = await Admin.findByPk(loggedInAdminID);
     const elections = await Election.findByPk(request.params.id);
 
+    const questions = await question.findAll({
+      where: { electionID: request.params.id },
+    });
+
     response.render("electionHome", {
       election: elections,
       username: admin.name,
+      questions: questions,
     });
   }
 );
@@ -246,6 +252,34 @@ app.post("/users", async (request, response) => {
     return response.redirect("/signup");
   }
 });
+
+// add question to election
+app.post(
+  "/election/:id/questions/add",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const loggedInAdminID = request.user.id;
+
+    const election = await Election.findByPk(request.params.id);
+
+    if (election.adminID !== loggedInAdminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    try {
+      await question.add(
+        request.body.title,
+        request.body.description,
+        request.params.id
+      );
+      response.redirect(`/election/${request.params.id}`);
+    } catch (error) {
+      console.log(error);
+      return response.send(error);
+    }
+  }
+);
 
 // signout admin
 app.get("/signout", (request, response) => {
