@@ -531,6 +531,69 @@ app.get(
   }
 );
 
+// edit question
+app.post(
+  "/election/:electionID/question/:questionID/update",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    console.log("found");
+    const adminID = request.user.id;
+    const election = await Election.findByPk(request.params.electionID);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    if (election.launched) {
+      console.log("Election already launched");
+      return response.json({ error: "Request denied" });
+    }
+
+    try {
+      await question.edit(
+        request.body.title,
+        request.body.description,
+        request.params.questionID
+      );
+      response.redirect(
+        `/election/${request.params.electionID}/question/${request.params.questionID}`
+      );
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  }
+);
+
+// edit question frontend
+app.get(
+  "/election/:electionID/question/:questionID/edit",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+    const admin = await Admin.findByPk(adminID);
+    const election = await Election.findByPk(request.params.electionID);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    if (election.launched) {
+      console.log("Election already launched");
+      return response.json({ error: "Request denied" });
+    }
+
+    const Question = await question.findByPk(request.params.questionID);
+    response.render("editQuestion", {
+      username: admin.name,
+      election: election,
+      question: Question,
+    });
+  }
+);
+
 // signout admin
 app.get("/signout", (request, response) => {
   request.logout((err) => {
