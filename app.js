@@ -284,6 +284,11 @@ app.post(
       return response.json({ error: "Request denied" });
     }
 
+    if (election.launched) {
+      console.log("Election already launched");
+      return response.json({ error: "Request denied" });
+    }
+
     try {
       await question.add(
         request.body.title,
@@ -396,6 +401,11 @@ app.post(
 
     if (election.adminID !== adminID) {
       console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    if (election.launched) {
+      console.log("Election already launched");
       return response.json({ error: "Request denied" });
     }
 
