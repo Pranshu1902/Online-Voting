@@ -13,6 +13,16 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "electionID",
       });
     }
+
+    static async add(voterID, password, electionID) {
+      const res = await Voter.create({
+        voterID: voterID,
+        password: password,
+        electionID: electionID,
+        voted: false,
+      });
+      return res;
+    }
   }
   Voter.init(
     {

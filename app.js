@@ -2,7 +2,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const { Admin, Election, question, Option } = require("./models");
+const { Admin, Election, question, Option, Voter } = require("./models");
 const bcrypt = require("bcrypt");
 var cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -140,10 +140,15 @@ app.get(
       where: { electionID: request.params.id },
     });
 
+    const voters = await Voter.findAll({
+      where: { electionID: request.params.id },
+    });
+
     response.render("electionHome", {
       election: elections,
       username: admin.name,
       questions: questions,
+      voters: voters,
     });
   }
 );
@@ -591,6 +596,33 @@ app.get(
       election: election,
       question: Question,
     });
+  }
+);
+
+// add voter
+app.post(
+  "/election/:id/voters/add",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+    const election = await Election.findByPk(request.params.id);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    try {
+      await Voter.add(
+        request.body.voterID,
+        request.body.password,
+        request.params.id
+      );
+      response.redirect(`/election/${request.params.id}`);
+    } catch (error) {
+      console.log(error);
+      return response.send(error);
+    }
   }
 );
 
