@@ -281,6 +281,36 @@ app.post(
   }
 );
 
+// delete option for question
+app.delete(
+  "/election/:electionID/question/:questionID/option/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+    const election = await Election.findByPk(request.params.electionID);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    const Question = await question.findByPk(request.params.questionID);
+
+    if (!Question) {
+      console.log("Question not found");
+      return response.json({ error: "Question not found" });
+    }
+
+    try {
+      await Option.destroy({ where: { id: request.params.id } });
+      return response.json({ ok: true });
+    } catch (error) {
+      console.log(error);
+      return response.send(error);
+    }
+  }
+);
+
 // delete question
 app.delete(
   "/election/:id/question/:questiondID",
