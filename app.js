@@ -394,6 +394,82 @@ app.post(
   }
 );
 
+// launch election
+app.put(
+  "/election/:id/launch",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    console.log("launch initiaited");
+    const adminID = request.user.id;
+    const election = await Election.findByPk(request.params.id);
+
+    // ensure that admin has access rights
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    // ensure that there is atelast 1 question in the election
+    const questions = await question.findAll({
+      where: { electionID: request.params.id },
+    });
+    if (questions.length === 0) {
+      console.log("No questions added");
+      return response.json({ error: "No questions added" });
+    }
+
+    // ensure that each question has alteast 2 options
+    for (let i = 0; i < questions.length; i++) {
+      const options = await Option.findAll({
+        where: { questionID: questions[i].id },
+      });
+      if (options.length < 1) {
+        console.log("No options added");
+        return response.json({ error: "No options added" });
+      }
+    }
+
+    try {
+      console.log("test passed");
+      await Election.launch(request.params.id);
+      console.log("launch success");
+      return response.json({ ok: true });
+    } catch (error) {
+      console.log(error);
+      return response.send(error);
+    }
+  }
+);
+
+// end election
+app.put(
+  "/election/:id/end",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+    const election = await Election.findByPk(request.params.id);
+
+    // ensure that admin has access rights
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    if (election.ended === true || election.launched === false) {
+      console.log("Election not launched");
+      return response.json({ error: "Election not launched" });
+    }
+
+    try {
+      await Election.end(request.params.id);
+      return response.json({ ok: true });
+    } catch (error) {
+      console.log(error);
+      return response.send(error);
+    }
+  }
+);
+
 // signout admin
 app.get("/signout", (request, response) => {
   request.logout((err) => {

@@ -26,6 +26,30 @@ module.exports = (sequelize, DataTypes) => {
       });
       return res;
     }
+
+    static async launch(id) {
+      const res = await Election.update(
+        { launched: true },
+        {
+          where: {
+            id: id,
+          },
+        }
+      );
+      return res;
+    }
+
+    static async end(id) {
+      const res = await Election.update(
+        { ended: true },
+        {
+          where: {
+            id: id,
+          },
+        }
+      );
+      return res;
+    }
   }
   Election.init(
     {
