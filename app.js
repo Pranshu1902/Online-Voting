@@ -67,7 +67,6 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log("Serializing user in session", user.id);
   done(null, user.id);
 });
 
@@ -115,11 +114,23 @@ app.get(
   }
 );
 
+app.get(
+  "/election",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const loggedInAdminID = request.user.id;
+    const elections = await Election.findAll({
+      where: { adminID: loggedInAdminID },
+    });
+
+    return response.json({ elections });
+  }
+);
+
 app.delete(
   "/election/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    console.log("found");
     try {
       await Election.destroy({ where: { id: request.params.id } });
       return response.json({ ok: true });
@@ -205,7 +216,6 @@ app.post(
     failureFlash: true,
   }),
   function (request, response) {
-    console.log(request.user);
     response.redirect("/home");
   }
 );

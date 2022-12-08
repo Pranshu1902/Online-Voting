@@ -9,7 +9,7 @@ let server, agent;
 const login = async () => {
   await agent
     .post("/session")
-    .send({ name: "test@user.com", password: "12345678" });
+    .send({ email: "test@user.com", password: "12345678" });
 };
 
 describe("first", () => {
@@ -47,6 +47,23 @@ describe("first", () => {
       password: "12345678",
     });
     expect(res.statusCode).toBe(302);
+  });
+
+  test("create election", async () => {
+    login();
+    
+    let count, newCount;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    await agent.post("/election").send({
+      name: "test election",
+    });
+
+    await agent.get("/election").then((data) => {
+      newCount = data.body.elections.length;
+    });
+    expect(newCount).toBe(count + 1);
   });
 
   test("signout admin", async () => {
