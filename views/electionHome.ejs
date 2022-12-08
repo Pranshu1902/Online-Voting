@@ -109,11 +109,12 @@
 
         <!-- Add new question -->
         <% if (!election.launched) { %>
+        <p class="text-gray-600 text-xl pt-6">Add Question</p>
         <div>
           <form
             action="/election/<%= election.id %>/questions/add"
             method="post"
-            class="flex flex-col md:flex-row gap-4 pt-4"
+            class="flex flex-col md:flex-row gap-4 pt-2"
           >
             <div class="flex flex-col">
               <input

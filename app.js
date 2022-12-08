@@ -227,7 +227,7 @@ app.get(
   }
 );
 
-app.put(
+app.post(
   "/election/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {

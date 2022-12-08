@@ -18,7 +18,9 @@
       <div class="flex flex-col justify-center md:w-2/5 w-full">
         <hr />
         <div class="pt-6 flex justify-between">
-          <p class="font-bold text-4xl"><%= election.name %></p>
+          <a href="/election/<%= election.id %>" class="font-bold text-4xl hover:underline"
+            ><%= election.name %></a
+          >
         </div>
 
         <!-- Update Question -->
@@ -47,12 +49,17 @@
                 class="border-2 border-black p-2 rounded-lg"
               />
             </div>
-            <div class="flex justify-center items-center w-full">
+            <div class="flex justify-center items-center w-full gap-4">
               <button
                 type="submit"
                 class="bg-green-400 transition duration-200 border-2 border-black p-2 rounded-lg hover:bg-green-600 px-6"
               >
                 Update
+              </button>
+              <button
+                class="bg-gray-400 transition duration-200 border-2 border-black p-2 rounded-lg hover:bg-gray-600 px-6"
+              >
+                Cancel
               </button>
             </div>
           </form>
