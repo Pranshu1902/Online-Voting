@@ -187,6 +187,9 @@
 
         <!-- List of Voters -->
         <p class="font-semibold pt-4 text-xl">Voters</p>
+        <% if (voters.length === 0) { %>
+          <h1 class="text-2xl flex justify-center text-gray-600 font-semibold">No voters yet</h1>
+        <% } %>
         <div class="flex flex-col justify-center items-center p-4">
           <div class="flex flex-col gap-4 justify-center w-full p-4">
             <% for (var i=0; i<voters.length; i++) { %>
