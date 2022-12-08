@@ -50,8 +50,6 @@ describe("first", () => {
   });
 
   test("create election", async () => {
-    login();
-    
     let count, newCount;
     const response = await agent.get("/election");
     count = response.body.elections.length;
@@ -64,6 +62,18 @@ describe("first", () => {
       newCount = data.body.elections.length;
     });
     expect(newCount).toBe(count + 1);
+  });
+
+  test("delete election", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    const res = await agent.delete(`/election/${electionID}`);
+
+    expect(res.statusCode).toBe(200);
   });
 
   test("signout admin", async () => {
