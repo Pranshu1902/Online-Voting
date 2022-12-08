@@ -497,6 +497,40 @@ app.put(
   }
 );
 
+// election preview
+app.get(
+  "/election/:id/preview",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+    const election = await Election.findByPk(request.params.id);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    const questions = await question.findAll({
+      where: { electionID: request.params.id },
+    });
+
+    const options = [];
+
+    for (let i = 0; i < questions.length; i++) {
+      const allOption = await Option.findAll({
+        where: { questionID: questions[i].id },
+      });
+      options.push(allOption);
+    }
+
+    response.render("preview", {
+      election: election,
+      questions: questions,
+      options: options,
+    });
+  }
+);
+
 // signout admin
 app.get("/signout", (request, response) => {
   request.logout((err) => {
