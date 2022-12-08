@@ -148,10 +148,27 @@ app.get(
   }
 );
 
+// delete election
 app.delete(
   "/election/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
+    // get all questions of that election
+    const questions = await question.findAll({
+      where: { electionID: request.params.id },
+    });
+
+    // delete all options and then questions of that election
+    questions.forEach(async (Question) => {
+      const options = await Option.findAll({
+        where: { questionID: Question.id },
+      });
+      options.forEach(async (option) => {
+        await Option.destroy({ where: { id: option.id } });
+      });
+      await question.destroy({ where: { id: Question.id } });
+    });
+
     try {
       await Election.destroy({ where: { id: request.params.id } });
       return response.json({ ok: true });
