@@ -333,6 +333,32 @@ app.get(
   }
 );
 
+// add option to questions
+app.post(
+  "/election/:electionID/question/:questionID/options/add",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+
+    const election = await Election.findByPk(request.params.electionID);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    try {
+      await Option.add(request.body.option, request.params.questionID);
+      response.redirect(
+        `/election/${request.params.electionID}/question/${request.params.questionID}`
+      );
+    } catch (error) {
+      console.log(error);
+      return response.send(error);
+    }
+  }
+);
+
 // signout admin
 app.get("/signout", (request, response) => {
   request.logout((err) => {

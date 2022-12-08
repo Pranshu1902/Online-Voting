@@ -70,9 +70,9 @@
             <% } %>
             <% for (var i=0; i<options.length; i++) { %>
                 <div class="flex justify-between gap-6">
-                    <li class="text-xl"><%= options[i].title %></li>
+                    <li class="text-xl"><%= options[i].value %></li>
                     <div class="flex gap-4 justify-center items-center">
-                        <div onclick="deleteOption('<%= options[i].id %>')"><i class="cursor-pointer fa fa-cross hover:text-red-500 transition duration-200"></i></div>
+                        <div onclick="deleteOption('<%= options[i].id %>')"><i class="cursor-pointer fa fa-remove hover:text-red-500 transition duration-200"></i></div>
                     </div>
                 </div>
             <% } %>

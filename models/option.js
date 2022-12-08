@@ -13,6 +13,14 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "questionID",
       });
     }
+
+    static async add(value, questionID) {
+      const res = await Option.create({
+        value: value,
+        questionID: questionID,
+      });
+      return res;
+    }
   }
   Option.init(
     {
