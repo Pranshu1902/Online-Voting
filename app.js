@@ -11,6 +11,7 @@ const session = require("express-session");
 const localStrategy = require("passport-local");
 const passport = require("passport");
 const flash = require("connect-flash");
+const voter = require("./models/voter");
 
 const saltRounds = 10;
 
@@ -735,12 +736,23 @@ app.get("/election/:id/vote", async (request, response) => {
     console.log("Election ended");
   }
 
-  response.render("vote", {
-    election: election,
-    questions: questions,
-    options: options,
-    verified: false,
-  });
+  if (voter.voted) {
+    response.render("vote", {
+      election: election,
+      questions: questions,
+      options: options,
+      verified: true,
+      submitted: true,
+    });
+  } else {
+    response.render("vote", {
+      election: election,
+      questions: questions,
+      options: options,
+      verified: false,
+      submitted: false,
+    });
+  }
 });
 
 // login voter
@@ -782,13 +794,25 @@ app.post("/election/:id/vote", async (request, response) => {
         options.push(allOption);
       }
 
-      response.render("vote", {
-        election: election,
-        questions: questions,
-        options: options,
-        verified: true,
-        voter: voter,
-      });
+      if (voter.voted) {
+        response.render("vote", {
+          election: election,
+          questions: questions,
+          options: options,
+          verified: true,
+          voter: voter,
+          submitted: true,
+        });
+      } else {
+        response.render("vote", {
+          election: election,
+          questions: questions,
+          options: options,
+          verified: true,
+          voter: voter,
+          submitted: false,
+        });
+      }
     } else {
       // flash invalid
       response.render("vote", {
@@ -797,6 +821,7 @@ app.post("/election/:id/vote", async (request, response) => {
         options: [],
         verified: false,
         voter: null,
+        submitted: false,
       });
     }
   } catch (error) {
@@ -804,6 +829,60 @@ app.post("/election/:id/vote", async (request, response) => {
     return response.send(error);
   }
 });
+
+// submit voter response
+app.post(
+  "/election/:electionID/voter/:id/submit",
+  async (request, response) => {
+    const election = await Election.findByPk(request.params.electionID);
+
+    // validation checks
+    if (election.launched === false) {
+      console.log("Election not launched");
+      return response.send("Election not launched");
+    }
+
+    if (election.ended === true) {
+      console.log("Election ended");
+      return response.send("Election ended");
+    }
+
+    try {
+      const voter = await Voter.findByPk(request.params.id);
+
+      // const questions = await question.findAll({
+      //   where: {
+      //     electionID: request.params.electionID,
+      //   },
+      // });
+
+      console.log(request.body);
+
+      // for (let i = 0; i < questions.length; i++) {
+      //   const option = await Option.findByPk(
+      //     request.body[`question-${questions[i].id}`]
+      //   );
+      //   await voter.addOption(option);
+      // }
+
+      // mark the voter as voted
+      await Voter.markVoted(request.params.id);
+
+      // render thank you message
+      response.render("vote", {
+        election: election,
+        questions: [],
+        options: [],
+        verified: true,
+        voter: voter,
+        submitted: true,
+      });
+    } catch (error) {
+      console.log(error);
+      return response.send(error);
+    }
+  }
+);
 
 // signout admin
 app.get("/signout", (request, response) => {

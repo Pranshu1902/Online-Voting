@@ -32,6 +32,20 @@ module.exports = (sequelize, DataTypes) => {
       });
       return res;
     }
+
+    static async markVoted(id) {
+      const res = await Voter.update(
+        {
+          voted: true,
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+      );
+      return res;
+    }
   }
   Voter.init(
     {
