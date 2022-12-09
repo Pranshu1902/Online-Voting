@@ -856,23 +856,11 @@ app.post(
         },
       });
 
-      console.log(request.body);
-
       let responses = [];
 
       for (let i = 0; i < questions.length; i++) {
         const responseID = Number(request.body[`question-${questions[i].id}`]);
-
-        console.log(questions[i].id);
-        console.log(Number(request.body[`question-${questions[i].id}`]));
-        const option = await Option.findByPk(
-          Number(request.body[`question-${questions[i].id}`])
-        );
-        console.log(option.value);
-        console.log("------------------------");
-
         responses.push(responseID);
-        // await voter.addOption(option);
       }
 
       // add responses of voter
@@ -880,10 +868,6 @@ app.post(
 
       // mark the voter as voted
       await Voter.markVoted(request.params.id);
-
-      // test
-      const vote = await Voter.findByPk(request.params.id);
-      console.log(vote);
 
       // render thank you message
       response.render("vote", {
