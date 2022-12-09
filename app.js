@@ -649,6 +649,67 @@ app.post(
   }
 );
 
+// edit option frontend
+app.get(
+  "/election/:electionID/question/:questionID/option/:optionID/edit",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+    const admin = await Admin.findByPk(adminID);
+    const election = await Election.findByPk(request.params.electionID);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    if (election.launched) {
+      console.log("Election already launched");
+      return response.json({ error: "Request denied" });
+    }
+
+    const Question = await question.findByPk(request.params.questionID);
+    const option = await Option.findByPk(request.params.optionID);
+    response.render("editOption", {
+      username: admin.name,
+      election: election,
+      question: Question,
+      option: option,
+    });
+  }
+);
+
+// edit option
+app.post(
+  "/election/:electionID/question/:questionID/option/:optionID/update",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+    const election = await Election.findByPk(request.params.electionID);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    if (election.launched) {
+      console.log("Election already launched");
+      return response.json({ error: "Request denied" });
+    }
+
+    try {
+      await Option.edit(request.body.value, request.params.optionID);
+      // return response.json({ ok: true });
+      response.redirect(
+        `/election/${request.params.electionID}/question/${request.params.questionID}`
+      );
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  }
+);
+
 // signout admin
 app.get("/signout", (request, response) => {
   request.logout((err) => {

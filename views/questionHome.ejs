@@ -80,7 +80,8 @@
                 <div class="flex justify-between gap-6">
                     <li class="text-xl"><%= options[i].value %></li>
                     <div class="flex gap-4 justify-center items-center">
-                        <div onclick="deleteOption('<%= options[i].id %>')"><i class="cursor-pointer fa fa-remove hover:text-red-500 transition duration-200"></i></div>
+                      <a href="/election/<%= election.id %>/question/<%= question.id %>/option/<%= options[i].id %>/edit"><i class="cursor-pointer fa fa-edit hover:text-blue-700 transition duration-200"></i></a>
+                      <div onclick="deleteOption('<%= options[i].id %>')"><i class="cursor-pointer fa fa-remove hover:text-red-500 transition duration-200"></i></div>
                     </div>
                 </div>
             <% } %>

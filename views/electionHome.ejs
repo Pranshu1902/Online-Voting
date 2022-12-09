@@ -63,7 +63,16 @@
 
         <div class="flex flex-col md:flex-row justify-between gap-4">
           <div>
-            <p class="text-4xl font-semibold"><%= election.name %></p>
+            <div class="flex gap-2">
+              <p class="text-4xl font-semibold"><%= election.name %></p>
+              <% if (!election.launched) { %>
+                <a
+                    class="flex items-center hover:text-blue-600"
+                    href="/election/<%= election.id %>/edit"
+                    ><i class="fa fa-edit"></i></a
+                  >
+              <% } %>
+            </div>
             <p class="text-xl text-gray-500">
               <%= questions.length %> Questions
             </p>
