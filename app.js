@@ -758,7 +758,7 @@ app.post("/election/:id/vote", async (request, response) => {
   }
 
   try {
-    const voter = await Voter.findAll({
+    const voter = await Voter.findOne({
       where: {
         electionID: request.params.id,
         voterID: request.body.voterID,
@@ -766,28 +766,39 @@ app.post("/election/:id/vote", async (request, response) => {
       },
     });
 
-    // render election
-    const questions = await question.findAll({
-      where: {
-        electionID: request.params.id,
-      },
-    });
-    const options = [];
-
-    for (let i = 0; i < questions.length; i++) {
-      const allOption = await Option.findAll({
-        where: { questionID: questions[i].id },
+    if (voter) {
+      // render election
+      const questions = await question.findAll({
+        where: {
+          electionID: request.params.id,
+        },
       });
-      options.push(allOption);
-    }
+      const options = [];
 
-    response.render("vote", {
-      election: election,
-      questions: questions,
-      options: options,
-      verified: true,
-      voter: voter,
-    });
+      for (let i = 0; i < questions.length; i++) {
+        const allOption = await Option.findAll({
+          where: { questionID: questions[i].id },
+        });
+        options.push(allOption);
+      }
+
+      response.render("vote", {
+        election: election,
+        questions: questions,
+        options: options,
+        verified: true,
+        voter: voter,
+      });
+    } else {
+      // flash invalid
+      response.render("vote", {
+        election: election,
+        questions: [],
+        options: [],
+        verified: false,
+        voter: null,
+      });
+    }
   } catch (error) {
     console.log(error);
     return response.send(error);
