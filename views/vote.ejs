@@ -71,17 +71,20 @@
                                     <p class="text-gray-600"><%= questions[i].description %></p>
 
                                     <div class="pt-2 pl-6">
-                                        <% for (var j=0; j<options[i].length; j++) { %>
-                                            <div class="flex gap-2">
-                                                <input
-                                                    class="border-2 flex items-center border-black p-2 rounded-lg"
-                                                    id="question-<%= questions[i].id %>-<%= options[i][j].id %>"
-                                                    type="radio"
-                                                    name="question-<%= questions[i].id %>"
-                                                />
-                                                <label for="question-<%= questions[i].id %>-<%= options[i][j].id %>"><%= options[i][j].value %></label>
-                                            </div>
-                                        <% } %>
+                                        <fieldset id="question-<%= questions[i].id %>">
+                                            <% for (var j=0; j<options[i].length; j++) { %>
+                                                <div class="flex gap-2">
+                                                    <input
+                                                        class="border-2 flex items-center border-black p-2 rounded-lg"
+                                                        id="question-<%= questions[i].id %>-<%= options[i][j].id %>"
+                                                        type="radio"
+                                                        value="<%= options[i][j].id %>"
+                                                        name="question-<%= questions[i].id %>"
+                                                    />
+                                                    <label for="question-<%= questions[i].id %>-<%= options[i][j].id %>"><%= options[i][j].value %></label>
+                                                </div>
+                                            <% } %>
+                                        </fieldset>
                                     </div>
                                 </div>
                             <% } %>

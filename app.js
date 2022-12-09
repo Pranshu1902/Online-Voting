@@ -850,20 +850,24 @@ app.post(
     try {
       const voter = await Voter.findByPk(request.params.id);
 
-      // const questions = await question.findAll({
-      //   where: {
-      //     electionID: request.params.electionID,
-      //   },
-      // });
+      const questions = await question.findAll({
+        where: {
+          electionID: request.params.electionID,
+        },
+      });
 
       console.log(request.body);
 
-      // for (let i = 0; i < questions.length; i++) {
-      //   const option = await Option.findByPk(
-      //     request.body[`question-${questions[i].id}`]
-      //   );
-      //   await voter.addOption(option);
-      // }
+      for (let i = 0; i < questions.length; i++) {
+        console.log(questions[i].id);
+        console.log(Number(request.body[`question-${questions[i].id}`]));
+        const option = await Option.findByPk(
+          Number(request.body[`question-${questions[i].id}`])
+        );
+        console.log(option.value);
+        console.log("------------------------");
+        // await voter.addOption(option);
+      }
 
       // mark the voter as voted
       await Voter.markVoted(request.params.id);
