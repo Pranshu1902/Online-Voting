@@ -37,6 +37,20 @@
           }
         });
       }
+
+      //delete voter
+      function deleteVoter(electionID, id) {
+        fetch(`/election/${electionID}/voter/${id}/delete`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then(res => {
+          if (res.ok) {
+            window.location.reload();
+          }
+        })
+      }
     </script>
   </head>
   <body class="bg-gradient-to-tl from-gray-200 to-green-500 min-h-screen w-full">
@@ -196,7 +210,7 @@
                 <div class="flex justify-between gap-6">
                     <li class="text-xl"><%= voters[i].voterID %></li>
                     <div class="flex gap-4 justify-center items-center">
-                        <a href="/election/<%= voters[i].id %>/delete"><i class="cursor-pointer fa fa-remove hover:text-red-500 transition duration-200"></i></a>
+                        <div onclick="deleteVoter(<%= election.id %>, <%= voters[i].id %>)"><i class="cursor-pointer fa fa-remove hover:text-red-500 transition duration-200"></i></div>
                         <!-- <div onclick="deleteElection('<%= voters[i].id %>')"><i class="cursor-pointer fa fa-trash hover:text-red-500 transition duration-200"></i></div> -->
                     </div>
                 </div>

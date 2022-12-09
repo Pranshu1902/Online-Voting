@@ -23,6 +23,15 @@ module.exports = (sequelize, DataTypes) => {
       });
       return res;
     }
+
+    static async delete(voterID) {
+      const res = await Voter.destroy({
+        where: {
+          id: voterID,
+        },
+      });
+      return res;
+    }
   }
   Voter.init(
     {

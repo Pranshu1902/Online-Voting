@@ -626,6 +626,31 @@ app.post(
   }
 );
 
+// delete voter
+app.post(
+  "/election/:electionID/voter/:voterID/delete",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    console.log("called");
+    const adminID = request.user.id;
+    const election = await Election.findByPk(request.params.electionID);
+
+    if (election.adminID !== adminID) {
+      console.log("You don't have access to edit this election");
+      return response.json({ error: "Request denied" });
+    }
+
+    try {
+      console.log("ecextted");
+      await Voter.delete(request.params.voterID);
+      return response.json({ ok: true });
+    } catch (error) {
+      console.log(error);
+      return response.send(error);
+    }
+  }
+);
+
 // signout admin
 app.get("/signout", (request, response) => {
   request.logout((err) => {
