@@ -885,6 +885,86 @@ app.post(
   }
 );
 
+// election results frontend
+app.get(
+  "/election/:id/result",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const adminID = request.user.id;
+    const admin = await Admin.findByPk(adminID);
+    const election = await Election.findByPk(request.params.id);
+
+    if (adminID !== election.adminID) {
+      return response.send("You are not authorized to view this page");
+    }
+
+    const questions = await question.findAll({
+      where: {
+        electionID: request.params.id,
+      },
+    });
+
+    const voters = await Voter.findAll({
+      where: {
+        electionID: request.params.id,
+      },
+    });
+
+    const totalVoters = voters.length;
+
+    let optionPercentage = [];
+
+    for (let i = 0; i < questions.length; i++) {
+      // specific question
+      let array = [];
+
+      // all options of that question
+      const allOption = await Option.findAll({
+        where: { questionID: questions[i].id },
+      });
+
+      allOption.forEach((option) => {
+        // count for specific option
+        let count = 0;
+
+        voters.forEach((voter) => {
+          if (voter.responses.includes(option.id)) {
+            count++;
+          }
+        });
+
+        array.push((count * 100) / totalVoters); // adding the percentage for that specific option of specific question
+      });
+
+      optionPercentage.push(array);
+    }
+
+    const options = [];
+
+    for (let i = 0; i < questions.length; i++) {
+      const allOption = await Option.findAll({
+        where: { questionID: questions[i].id },
+      });
+      options.push(allOption);
+    }
+
+    // adding options data in questions array
+    // for (let i = 0; i < questions.length; i++) {
+    //   questions[i] = { ...questions[i], data: optionPercentage[i] };
+    // }
+
+    console.log(questions);
+
+    response.render("result", {
+      username: admin.name,
+      election: election,
+      questions: questions,
+      options: options,
+      data: optionPercentage,
+    });
+  }
+);
+
 // signout admin
 app.get("/signout", (request, response) => {
   request.logout((err) => {

@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <title><%= election.name %> Result | Online Voting Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+      integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body class="bg-gradient-to-tl from-gray-200 to-green-500 h-full w-full">
+    <div class="flex justify-center text-blue-800">
+      <%- include ('updatedHeader', {username: username}) %>
+    </div>
+    <div class="flex flex-col justify-center items-center p-4">
+      <div class="flex flex-col justify-center md:w-2/5 w-full">
+        <hr />
+        <div class="pt-6 flex justify-between">
+          <a
+            href="/election/<%= election.id %>"
+            class="font-bold text-4xl hover:underline"
+            ><%= election.name %>'s Result</a
+          >
+        </div>
+
+        <!-- Result -->
+        <div class="pt-8">
+          <div class="flex flex-col gap-4">
+            <% for (var i=0; i<questions.length; i++) { %>
+                <div>
+                    <p class="font-bold text-xl"><%= i+1 %>. <%= questions[i].title %></p>
+                    <p class="text-gray-600"><%= questions[i].description %></p>
+
+                    <div class="pt-2 pl-6">
+                        <% for (var j=0; j<options[i].length; j++) { %>
+                                <li><%= options[i][j].value %>: <b><%= data[i][j] %>%</b></li>
+                        <% } %>
+                    </div>
+                </div>
+            <% } %>
+          </div>
+          <a href="/election/<%= election.id %>" class="bg-blue-500 hover:bg-blue-700 border-2 border-blue-800 p-2 rounded-lg font-bold text-white flex justify-center mt-6">Return to Election</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
