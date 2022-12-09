@@ -957,11 +957,6 @@ app.get(
       options.push(allOption);
     }
 
-    // adding options data in questions array
-    // for (let i = 0; i < questions.length; i++) {
-    //   questions[i] = { ...questions[i], data: optionPercentage[i] };
-    // }
-
     console.log(questions);
 
     response.render("result", {
