@@ -959,7 +959,8 @@ app.get(
 
         const percent = (count * 100) / totalVoters;
 
-        array.push(percent.toFixed(2)); // adding the percentage for that specific option of specific question
+        // adding the percentage for that specific option of specific question
+        array.push(percent.toFixed(2));
       });
 
       optionPercentage.push(array);
