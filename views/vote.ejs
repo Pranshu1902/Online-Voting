@@ -31,30 +31,56 @@
             </div>
         <% } else { %>
             <div class="flex flex-col gap-4">
-                <% for (var i=0; i<questions.length; i++) { %>
-                    <div>
-                        <p class="font-bold text-xl"><%= i+1 %>. <%= questions[i].title %></p>
-                        <p class="text-gray-600"><%= questions[i].description %></p>
 
-                        <div class="pt-2 pl-6">
-                            <% for (var j=0; j<options[i].length; j++) { %>
-                                <div class="flex gap-2">
-                                    <input
-                                      class="border-2 flex items-center border-black p-2 rounded-lg"
-                                      id="question-<%= questions[i].id %>-<%= options[i][j].id %>"
-                                      type="radio"
-                                      name="question-<%= questions[i].id %>"
-                                    />
-                                    <label for="question-<%= questions[i].id %>-<%= options[i][j].id %>"><%= options[i][j].value %></label>
-                                  </div>
-                            <% } %>
+                <!-- Voter authentication -->
+                <% if (!verified) { %>
+                    <form action="/election/<%= election.id %>/vote" method="post" class="flex flex-col gap-4 justify-center items-center">
+                        <div class="flex flex-col gap-2">
+                            <label for="voterID">Voter ID</label>
+                            <input
+                            class="border-2 flex items-center border-black p-2 rounded-lg"
+                            id="voterID"
+                            type="text"
+                            name="voterID"
+                            />
                         </div>
-                    </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="password">Password</label>
+                            <input
+                            class="border-2 flex items-center border-black p-2 rounded-lg"
+                            id="password"
+                            type="password"
+                            name="password"
+                            />
+                        </div>
+                        <button class="flex justify-center mt-4 p-2 rounded-lg bg-purple-500 hover:bg-purple-700 border-2 border-purple-800">Submit</button>
+                    </form>
+                <% } else { %>
+                    <% for (var i=0; i<questions.length; i++) { %>
+                        <div>
+                            <p class="font-bold text-xl"><%= i+1 %>. <%= questions[i].title %></p>
+                            <p class="text-gray-600"><%= questions[i].description %></p>
+
+                            <div class="pt-2 pl-6">
+                                <% for (var j=0; j<options[i].length; j++) { %>
+                                    <div class="flex gap-2">
+                                        <input
+                                        class="border-2 flex items-center border-black p-2 rounded-lg"
+                                        id="question-<%= questions[i].id %>-<%= options[i][j].id %>"
+                                        type="radio"
+                                        name="question-<%= questions[i].id %>"
+                                        />
+                                        <label for="question-<%= questions[i].id %>-<%= options[i][j].id %>"><%= options[i][j].value %></label>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
                 <% } %>
             </div>
         <% } %>
 
-        <% if (!election.ended && election.launched) { %>
+        <% if (!election.ended && election.launched && verified) { %>
             <button class="flex justify-center mt-8 p-2 rounded-lg bg-purple-500 hover:bg-purple-700 border-2 border-purple-800">Submit</button>
         <% } %>
       </div>

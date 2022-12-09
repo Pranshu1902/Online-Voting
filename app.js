@@ -739,7 +739,59 @@ app.get("/election/:id/vote", async (request, response) => {
     election: election,
     questions: questions,
     options: options,
+    verified: false,
   });
+});
+
+// login voter
+app.post("/election/:id/vote", async (request, response) => {
+  const election = await Election.findByPk(request.params.id);
+
+  if (election.launched === false) {
+    console.log("Election not launched");
+    return response.send("Election not launched");
+  }
+
+  if (election.ended === true) {
+    console.log("Election ended");
+    return response.send("Election ended");
+  }
+
+  try {
+    const voter = await Voter.findAll({
+      where: {
+        electionID: request.params.id,
+        voterID: request.body.voterID,
+        password: request.body.password,
+      },
+    });
+
+    // render election
+    const questions = await question.findAll({
+      where: {
+        electionID: request.params.id,
+      },
+    });
+    const options = [];
+
+    for (let i = 0; i < questions.length; i++) {
+      const allOption = await Option.findAll({
+        where: { questionID: questions[i].id },
+      });
+      options.push(allOption);
+    }
+
+    response.render("vote", {
+      election: election,
+      questions: questions,
+      options: options,
+      verified: true,
+      voter: voter,
+    });
+  } catch (error) {
+    console.log(error);
+    return response.send(error);
+  }
 });
 
 // signout admin
