@@ -910,6 +910,13 @@ app.get(
       },
     });
 
+    let votesCast = 0;
+    voters.forEach((voter) => {
+      if (voter.voted) {
+        votesCast++;
+      }
+    });
+
     const totalVoters = voters.length;
 
     let optionPercentage = [];
@@ -933,7 +940,9 @@ app.get(
           }
         });
 
-        array.push((count * 100) / totalVoters); // adding the percentage for that specific option of specific question
+        const percent = (count * 100) / totalVoters;
+
+        array.push(percent.toFixed(2)); // adding the percentage for that specific option of specific question
       });
 
       optionPercentage.push(array);
@@ -961,6 +970,8 @@ app.get(
       questions: questions,
       options: options,
       data: optionPercentage,
+      votesCast: votesCast,
+      totalVoters: totalVoters,
     });
   }
 );
