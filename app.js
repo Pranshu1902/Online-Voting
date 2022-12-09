@@ -175,6 +175,14 @@ app.delete(
       await question.destroy({ where: { id: Question.id } });
     });
 
+    // delete voters of the election
+    const voters = await Voter.findAll({
+      where: { electionID: request.params.id },
+    });
+    voters.forEach(async (voter) => {
+      await Voter.destroy({ where: { id: voter.id } });
+    });
+
     try {
       await Election.destroy({ where: { id: request.params.id } });
       return response.json({ ok: true });
