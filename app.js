@@ -710,6 +710,38 @@ app.post(
   }
 );
 
+// cast vote frontend
+app.get("/election/:id/vote", async (request, response) => {
+  const election = await Election.findByPk(request.params.id);
+  const questions = await question.findAll({
+    where: {
+      electionID: request.params.id,
+    },
+  });
+  const options = [];
+
+  for (let i = 0; i < questions.length; i++) {
+    const allOption = await Option.findAll({
+      where: { questionID: questions[i].id },
+    });
+    options.push(allOption);
+  }
+
+  if (election.launched === false) {
+    console.log("Election not launched");
+  }
+
+  if (election.ended === true) {
+    console.log("Election ended");
+  }
+
+  response.render("vote", {
+    election: election,
+    questions: questions,
+    options: options,
+  });
+});
+
 // signout admin
 app.get("/signout", (request, response) => {
   request.logout((err) => {
