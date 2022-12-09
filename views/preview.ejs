@@ -28,7 +28,7 @@
                     <p class="text-gray-600"><%= questions[i].description %></p>
 
                     <div class="pt-2 pl-6">
-                        <% for (var j=0; j<options.length; j++) { %>
+                        <% for (var j=0; j<options[i].length; j++) { %>
                                 <li><%= options[i][j].value %></li>
                         <% } %>
                     </div>
