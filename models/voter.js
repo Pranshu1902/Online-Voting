@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         password: password,
         electionID: electionID,
         voted: false,
+        responses: [],
       });
       return res;
     }
@@ -46,12 +47,27 @@ module.exports = (sequelize, DataTypes) => {
       );
       return res;
     }
+
+    static async addResponse(id, response) {
+      const res = await Voter.update(
+        {
+          responses: response,
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+      );
+      return res;
+    }
   }
   Voter.init(
     {
       voterID: DataTypes.STRING,
       password: DataTypes.STRING,
       voted: DataTypes.BOOLEAN,
+      responses: DataTypes.ARRAY(DataTypes.INTEGER),
     },
     {
       sequelize,
