@@ -631,7 +631,6 @@ app.post(
   "/election/:electionID/voter/:voterID/delete",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    console.log("called");
     const adminID = request.user.id;
     const election = await Election.findByPk(request.params.electionID);
 
@@ -641,7 +640,6 @@ app.post(
     }
 
     try {
-      console.log("ecextted");
       await Voter.delete(request.params.voterID);
       return response.json({ ok: true });
     } catch (error) {
