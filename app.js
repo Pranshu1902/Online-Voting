@@ -621,6 +621,15 @@ app.post(
       return response.json({ error: "Request denied" });
     }
 
+    const existingVoter = await Voter.findOne({
+      where: { electionID: request.params.id, voterID: request.body.voterID },
+    });
+
+    if (existingVoter) {
+      console.log("Voter already exists");
+      return response.json({ error: "Voter already exists" });
+    }
+
     try {
       await Voter.add(
         request.body.voterID,
