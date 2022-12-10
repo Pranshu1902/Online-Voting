@@ -996,18 +996,26 @@ app.post("/election/:id/vote", async (request, response) => {
   }
 
   try {
-    // hash the password
-    const hashpwd = await bcrypt.hash(request.body.password, saltRounds);
-
     const voter = await Voter.findOne({
       where: {
         electionID: request.params.id,
         voterID: request.body.voterID,
-        password: hashpwd,
       },
     });
 
-    if (voter) {
+    // invalid Voter ID
+    if (!voter) {
+      request.flash("error", "Invalid Voter ID");
+      return response.redirect(`/election/${election.id}/vote`);
+    }
+
+    const voterVerified = await bcrypt.compare(
+      request.body.password,
+      voter.password
+    );
+
+    // invalid password
+    if (voterVerified) {
       // render election
       const questions = await question.findAll({
         where: {
@@ -1043,7 +1051,7 @@ app.post("/election/:id/vote", async (request, response) => {
         });
       }
     } else {
-      request.flash("error", "Invalid credentials");
+      request.flash("error", "Invalid password");
       return response.redirect(`/election/${election.id}/vote`);
     }
   } catch (error) {
