@@ -715,6 +715,11 @@ app.post(
       return response.redirect(`/election/${request.params.id}`);
     }
 
+    if (request.body.voterID <= 0) {
+      request.flash("voterError", "Invalid Voter ID");
+      return response.redirect(`/election/${request.params.id}`);
+    }
+
     if (request.body.password.length === 0) {
       request.flash("voterError", "Password can't be empty");
       return response.redirect(`/election/${request.params.id}`);
