@@ -617,6 +617,20 @@ app.post(
       return response.json({ error: "Request denied" });
     }
 
+    // validation checks
+    const sameQuestion = await question.findOne({
+      where: {
+        title: request.body.title,
+        electionID: request.params.electionID,
+      },
+    });
+    if (sameQuestion) {
+      request.flash("error", "Question name already used");
+      return response.redirect(
+        `/election/${request.params.electionID}/question/${request.params.questionID}/edit`
+      );
+    }
+
     try {
       await question.edit(
         request.body.title,
