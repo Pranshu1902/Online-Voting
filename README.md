@@ -65,6 +65,9 @@ To run tests, run the following command
 ## Screenshots
 
 Home Page:
+![Screenshot from 2022-12-10 23-23-09](https://user-images.githubusercontent.com/70687348/206869642-b79a0af6-ef21-4f51-ac53-25fe516c8643.png)
+
+Dashboard:
 
 ## Feedback
 
