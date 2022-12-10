@@ -93,6 +93,9 @@ app.get("/signup", (request, response) => {
 
 // login page frontend
 app.get("/login", (request, response) => {
+  if (request.user && request.user.id) {
+    return response.redirect("/home");
+  }
   response.render("login");
 });
 
