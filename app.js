@@ -817,11 +817,10 @@ app.post(
     }
 
     try {
-      await Voter.add(
-        request.body.voterID,
-        request.body.password,
-        request.params.id
-      );
+      // hash the password
+      const hashpwd = await bcrypt.hash(request.body.password, saltRounds);
+
+      await Voter.add(request.body.voterID, hashpwd, request.params.id);
       response.redirect(`/election/${request.params.id}`);
     } catch (error) {
       console.log(error);
@@ -997,11 +996,14 @@ app.post("/election/:id/vote", async (request, response) => {
   }
 
   try {
+    // hash the password
+    const hashpwd = await bcrypt.hash(request.body.password, saltRounds);
+
     const voter = await Voter.findOne({
       where: {
         electionID: request.params.id,
         voterID: request.body.voterID,
-        password: request.body.password,
+        password: hashpwd,
       },
     });
 
@@ -1068,7 +1070,8 @@ app.post(
       console.log("Election not launched");
       return response.render("error", {
         errorMessage: "Election not launched yet",
-      });    }
+      });
+    }
 
     if (election.ended === true) {
       console.log("Election ended");
