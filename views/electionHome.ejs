@@ -193,7 +193,7 @@
         >
           <div class="flex flex-col">
             <input
-              type="text"
+              type="number"
               name="voterID"
               placeholder="Voter ID"
               class="border-2 border-black p-2 rounded-lg"
@@ -216,6 +216,15 @@
             </button>
           </div>
         </form>
+
+        <!-- flash message -->
+        <div class="flex flex-col justify-center items-center gap-3 pt-4">
+          <% if (messages && messages.voterError && messages.voterError.length > 0) { %>
+            <% for(var i=0; i<messages.voterError.length; i++) {%>
+              <div class="bg-red-300 text-red-900 font-semibold p-2 rounded-lg shadow"> <%= messages.voterError[i] %></div>
+            <% } %>
+          <% } %>
+        </div>
 
         <!-- List of Voters -->
         <p class="font-semibold pt-4 text-xl">Voters</p>

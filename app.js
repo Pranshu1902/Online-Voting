@@ -709,13 +709,28 @@ app.post(
       return response.json({ error: "Request denied" });
     }
 
-    const existingVoter = await Voter.findOne({
+    // validation checks
+    if (request.body.voterID.length === 0) {
+      request.flash("voterError", "Voter ID can't be empty");
+      return response.redirect(`/election/${request.params.id}`);
+    }
+
+    if (request.body.password.length === 0) {
+      request.flash("voterError", "Password can't be empty");
+      return response.redirect(`/election/${request.params.id}`);
+    }
+
+    if (request.body.password.length < 5) {
+      request.flash("voterError", "Password must be of atleast length 5");
+      return response.redirect(`/election/${request.params.id}`);
+    }
+
+    const sameVoter = await Voter.findOne({
       where: { electionID: request.params.id, voterID: request.body.voterID },
     });
-
-    if (existingVoter) {
-      console.log("Voter already exists");
-      return response.json({ error: "Voter already exists" });
+    if (sameVoter) {
+      request.flash("voterError", "Voter ID already used");
+      return response.redirect(`/election/${request.params.id}`);
     }
 
     try {
