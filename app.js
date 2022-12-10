@@ -510,7 +510,7 @@ app.post(
 );
 
 // launch election
-app.put(
+app.get(
   "/election/:id/launch",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
@@ -529,8 +529,8 @@ app.put(
       where: { electionID: request.params.id },
     });
     if (questions.length === 0) {
-      console.log("No questions added");
-      return response.json({ error: "No questions added" });
+      request.flash("launch", "Please add atleast 1 question");
+      return response.redirect(`/election/${request.params.id}`);
     }
 
     // ensure that each question has alteast 2 options
@@ -539,16 +539,26 @@ app.put(
         where: { questionID: questions[i].id },
       });
       if (options.length < 1) {
-        console.log("No options added");
-        return response.json({ error: "No options added" });
+        request.flash(
+          "launch",
+          "Please add atleast 2 options to each question"
+        );
+        return response.redirect(`/election/${request.params.id}`);
       }
     }
 
+    // ensure that there is atleast 1 voter
+    const voters = await Voter.findAll({
+      where: { electionID: request.params.id },
+    });
+    if (voters.length === 0) {
+      request.flash("launch", "Please add atleast 1 voter");
+      return response.redirect(`/election/${request.params.id}`);
+    }
+
     try {
-      console.log("test passed");
       await Election.launch(request.params.id);
-      console.log("launch success");
-      return response.json({ ok: true });
+      return response.redirect(`/election/${request.params.id}`);
     } catch (error) {
       console.log(error);
       return response.send(error);
