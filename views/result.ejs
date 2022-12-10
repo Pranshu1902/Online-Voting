@@ -11,8 +11,19 @@
     />
   </head>
   <body class="bg-gradient-to-tl from-gray-200 to-green-500 min-h-screen w-full">
-    <div class="flex justify-center text-blue-800">
-      <%- include ('header') %>
+    <div class="flex flex-col justify-center items-center text-blue-800">
+      <% if (admin == true) { %>
+        <%- include ('updatedHeader', {username: username}) %>
+      <% } else { %>
+        <%- include ('header') %>
+      <% } %>
+
+      <% if (!admin) { %>
+        <div class="flex gap-2 items-center text-black text-xl">
+          <i class="fa fa-user"></i> <b><%= username %>'s</b> election
+        </div>
+      <% } %>
+
     </div>
     <div class="flex flex-col justify-center items-center p-4">
       <div class="flex flex-col justify-center md:w-2/5 w-full">
@@ -42,7 +53,11 @@
                 </div>
             <% } %>
           </div>
-          <a href="/election/<%= election.id %>" class="bg-green-500 hover:bg-green-700 border-2 border-green-800 p-2 rounded-lg font-bold text-white flex justify-center mt-8">Return to Election</a>
+          <% if (admin == true) { %>
+            <a href="/election/<%= election.id %>" class="bg-green-500 hover:bg-green-700 border-2 border-green-800 p-2 rounded-lg font-bold text-white flex justify-center mt-8">Return to Election</a>
+          <% } else { %>
+            <a href="/" class="bg-blue-500 hover:bg-blue-700 border-2 border-blue-800 p-2 rounded-lg font-bold text-white flex justify-center mt-8">Home</a>
+          <% } %>
         </div>
       </div>
     </div>

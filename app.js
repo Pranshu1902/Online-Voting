@@ -1109,6 +1109,7 @@ app.get(
       }
 
       response.render("result", {
+        admin: true,
         username: admin.name,
         election: election,
         questions: questions,
@@ -1127,6 +1128,7 @@ app.get(
       // getting the admin username
       const admin = await Admin.findByPk(election.adminID);
       return response.render("result", {
+        admin: false,
         username: admin.name,
         election: election,
         questions: questions,
