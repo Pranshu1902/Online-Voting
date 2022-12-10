@@ -719,6 +719,11 @@ app.post(
       return response.json({ error: "Request denied" });
     }
 
+    if (election.ended) {
+      console.log("Election ended");
+      return response.json({ error: "Request denied, election has ended" });
+    }
+
     // validation checks
     if (request.body.voterID.length === 0) {
       request.flash("voterError", "Voter ID can't be empty");
@@ -773,6 +778,11 @@ app.post(
     if (election.adminID !== adminID) {
       console.log("You don't have access to edit this election");
       return response.json({ error: "Request denied" });
+    }
+
+    if (election.ended) {
+      console.log("Election already ended");
+      return response.json({ error: "Request denied, election has ended" });
     }
 
     try {
