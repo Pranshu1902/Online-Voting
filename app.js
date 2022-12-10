@@ -1043,15 +1043,8 @@ app.post("/election/:id/vote", async (request, response) => {
         });
       }
     } else {
-      // flash invalid
-      response.render("vote", {
-        election: election,
-        questions: [],
-        options: [],
-        verified: false,
-        voter: null,
-        submitted: false,
-      });
+      request.flash("error", "Invalid credentials");
+      return response.redirect(`/election/${election.id}/vote`);
     }
   } catch (error) {
     console.log(error);
