@@ -1124,8 +1124,9 @@ app.get(
     } else {
       // if not admin and election not ended
       if (!election.ended) {
-        return response.json({ error: "Election not ended" });
-        // return response.render("notAuthorized");
+        return response.render("error", {
+          errorMessage: "You are not authorized to view this page",
+        });
       }
 
       // getting the admin username
