@@ -476,6 +476,27 @@ app.post(
       return response.json({ error: "Request denied" });
     }
 
+    // validation checks
+    if (request.body.option.length === 0) {
+      request.flash("error", "Option can't be empty");
+      return response.redirect(
+        `/election/${request.params.electionID}/question/${request.params.questionID}`
+      );
+    }
+
+    const sameOption = await Option.findOne({
+      where: {
+        questionID: request.params.questionID,
+        value: request.body.option,
+      },
+    });
+    if (sameOption) {
+      request.flash("error", "Option already exists");
+      return response.redirect(
+        `/election/${request.params.electionID}/question/${request.params.questionID}`
+      );
+    }
+
     try {
       await Option.add(request.body.option, request.params.questionID);
       response.redirect(
