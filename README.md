@@ -98,4 +98,4 @@ To run tests, run the following command
 
 ## Feedback
 
-If you have any feedback, please raise any issue
+If you have any feedback, please raise an issue
