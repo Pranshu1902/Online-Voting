@@ -261,6 +261,34 @@ app.post(
 
 // create new admin user
 app.post("/users", async (request, response) => {
+  // validation checks
+  if (request.body.email.length === 0) {
+    request.flash("error", "Email can't be empty");
+    return response.redirect("/signup");
+  }
+
+  if (request.body.password.length === 0) {
+    request.flash("error", "Password can't be empty");
+    return response.redirect("/signup");
+  }
+
+  if (request.body.name.length === 0) {
+    request.flash("error", "Name can't be empty");
+    return response.redirect("/signup");
+  }
+
+  if (request.body.password.length < 8) {
+    request.flash("error", "Password must be atleast 8 characters long");
+    return response.redirect("/signup");
+  }
+
+  // check if email already exists
+  const admin = await Admin.findOne({ where: { email: request.body.email } });
+  if (admin) {
+    request.flash("error", "Email already exists");
+    return response.redirect("/signup");
+  }
+
   // hasing the password
   const hashpwd = await bcrypt.hash(request.body.password, saltRounds); // take time so add await
   try {
