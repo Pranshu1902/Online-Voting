@@ -342,6 +342,25 @@ app.post(
       return response.json({ error: "Request denied" });
     }
 
+    // validation checks
+    if (request.body.title.length === 0) {
+      request.flash("error", "Question title can't be empty");
+      return response.redirect(`/election/${request.params.id}`);
+    }
+
+    const sameQuestion = await question.findOne({
+      where: { electionID: request.params.id, title: request.body.title },
+    });
+    if (sameQuestion) {
+      request.flash("error", "Question title already used");
+      return response.redirect(`/election/${request.params.id}`);
+    }
+
+    if (request.body.description.length === 0) {
+      request.flash("error", "Question description can't be empty");
+      return response.redirect(`/election/${request.params.id}`);
+    }
+
     try {
       await question.add(
         request.body.title,
