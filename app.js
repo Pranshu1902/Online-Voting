@@ -356,11 +356,6 @@ app.post(
       return response.redirect(`/election/${request.params.id}`);
     }
 
-    if (request.body.description.length === 0) {
-      request.flash("error", "Question description can't be empty");
-      return response.redirect(`/election/${request.params.id}`);
-    }
-
     try {
       await question.add(
         request.body.title,
