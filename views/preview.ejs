@@ -29,7 +29,16 @@
 
                     <div class="pt-2 pl-6">
                         <% for (var j=0; j<options[i].length; j++) { %>
-                                <li><%= options[i][j].value %></li>
+                          <div class="flex gap-2">
+                            <input
+                                class="border-2 flex items-center border-black p-2 rounded-lg"
+                                id="<%= questions[i].id %>-<%= options[i][j].id %>"
+                                type="radio"
+                                value="<%= options[i][j].id %>"
+                                name="<%= questions[i].id %>"
+                            />
+                            <label for="<%= questions[i].id %>-<%= options[i][j].id %>"><%= options[i][j].value %></label>
+                          </div>
                         <% } %>
                     </div>
                 </div>
