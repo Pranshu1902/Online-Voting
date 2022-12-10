@@ -83,14 +83,14 @@
             <div class="flex flex-col md:flex-row gap-4">
               <!-- Preview Link -->
               <a
-                class="p-1 rounded-lg bg-green-600 border-2 border-green-800 hover:bg-green-700 text-white font-bold px-6"
+                class="p-1 flex gap-2 items-center rounded-lg bg-green-600 border-2 border-green-800 hover:bg-green-700 text-white font-bold px-4"
                 href="/election/<%= election.id %>/preview"
                 ><i class="fa fa-eye"></i> Preview</a
               >
               <!-- Launch Button -->
               <button
                 onclick="launchElection(<%= election.id %>)"
-                class="p-1 rounded-lg bg-blue-600 border-2 border-blue-800 hover:bg-blue-700 text-white font-bold px-6"
+                class="p-1 flex gap-2 items-center rounded-lg bg-blue-600 border-2 border-blue-800 hover:bg-blue-700 text-white font-bold px-4"
               >
                 <i class="fa fa-tags"></i> Launch
               </button>
@@ -101,21 +101,21 @@
               <a
                 target="_blank"
                 href="/election/<%= election.id %>/vote"
-                class="p-1 rounded-lg bg-purple-600 border-2 border-purple-800 hover:bg-purple-700 text-white font-bold px-6"
+                class="p-1 flex gap-2 items-center rounded-lg bg-purple-600 border-2 border-purple-800 hover:bg-purple-700 text-white font-bold px-4"
               >
                 <i class="fa fa-external-link"></i> Public Link
               </a>
               <!-- Result Link -->
               <a
                 href="/election/<%= election.id %>/result"
-                class="p-1 rounded-lg bg-green-600 border-2 border-green-800 hover:bg-green-700 text-white font-bold px-6"
+                class="p-1 flex gap-2 items-center rounded-lg bg-green-600 border-2 border-green-800 hover:bg-green-700 text-white font-bold px-4"
               >
                 <i class="fa fa-list-alt"></i> Result
               </a>
               <!-- End Link -->
               <button
                 onclick="endElection(<%= election.id %>)"
-                class="p-1 rounded-lg bg-red-600 border-2 border-red-800 hover:bg-red-700 text-white font-bold px-6"
+                class="p-1 flex gap-2 items-center rounded-lg bg-red-600 border-2 border-red-800 hover:bg-red-700 text-white font-bold px-4"
               >
                 <i class="fa fa-flag-checkered"></i> End
               </button>
@@ -123,7 +123,7 @@
             <% } %> <% } else { %>
             <!-- Result Button -->
             <a
-              class="p-1 rounded-lg bg-green-600 border-2 border-green-800 hover:bg-green-700 text-white font-bold px-6"
+              class="p-1 flex gap-2 items-center rounded-lg bg-green-600 border-2 border-green-800 hover:bg-green-700 text-white font-bold px-4"
               href="/election/<%= election.id %>/result"
               ><i class="fa fa-list-alt"></i> Result</a
             >
