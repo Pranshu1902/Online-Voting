@@ -12,7 +12,7 @@
   </head>
   <body class="bg-gradient-to-tl from-gray-200 to-green-500 min-h-screen w-full">
     <div class="flex justify-center text-blue-800">
-      <%- include ('updatedHeader', {username: username}) %>
+      <%- include ('header') %>
     </div>
     <div class="flex flex-col justify-center items-center p-4">
       <div class="flex flex-col justify-center md:w-2/5 w-full">
@@ -36,7 +36,7 @@
 
                     <div class="pt-6 pl-6 flex flex-col gap-4">
                         <% for (var j=0; j<options[i].length; j++) { %>
-                                <div class="flex gap-2"><hr width="<%= data[i][j] %>%" style="height:30px; border:none; color:purple; background-color:purple;" /><p class="flex items-center gap-2 text-xl"><%= options[i][j].value %>:<b class="text-blue-700"><%= data[i][j] %>%</b></p></div>
+                          <div class="flex gap-2"><hr width="<%= data[i][j] %>%" style="height:30px; border:none; color:purple; background-color:purple;" /><p class="flex items-center gap-2 text-xl"><%= options[i][j].value %>:<b class="text-blue-700"><%= data[i][j] %>%</b></p></div>
                         <% } %>
                     </div>
                 </div>

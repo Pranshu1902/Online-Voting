@@ -879,6 +879,7 @@ app.get("/election/:id/vote", async (request, response) => {
 
   if (election.ended === true) {
     console.log("Election ended");
+    return response.redirect(`/election/${request.params.id}/result`);
   }
 
   if (voter.voted) {
@@ -1033,16 +1034,9 @@ app.post(
 // election results frontend
 app.get(
   "/election/:id/result",
-  connectEnsureLogin.ensureLoggedIn(),
+  // connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    const adminID = request.user.id;
-    const admin = await Admin.findByPk(adminID);
-    const election = await Election.findByPk(request.params.id);
-
-    if (adminID !== election.adminID) {
-      return response.send("You are not authorized to view this page");
-    }
-
+    // fetching and calculating all results
     const questions = await question.findAll({
       where: {
         electionID: request.params.id,
@@ -1103,17 +1097,45 @@ app.get(
       options.push(allOption);
     }
 
-    console.log(questions);
+    const election = await Election.findByPk(request.params.id);
 
-    response.render("result", {
-      username: admin.name,
-      election: election,
-      questions: questions,
-      options: options,
-      data: optionPercentage,
-      votesCast: votesCast,
-      totalVoters: totalVoters,
-    });
+    // if admin logged in
+    if (request.user && request.user.id) {
+      const adminID = request.user.id;
+      const admin = await Admin.findByPk(adminID);
+
+      if (adminID !== election.adminID) {
+        return response.send("You are not authorized to view this page");
+      }
+
+      response.render("result", {
+        username: admin.name,
+        election: election,
+        questions: questions,
+        options: options,
+        data: optionPercentage,
+        votesCast: votesCast,
+        totalVoters: totalVoters,
+      });
+    } else {
+      // if not admin and election not ended
+      if (!election.ended) {
+        return response.json({ error: "Election not ended" });
+        // return response.render("notAuthorized");
+      }
+
+      // getting the admin username
+      const admin = await Admin.findByPk(election.adminID);
+      return response.render("result", {
+        username: admin.name,
+        election: election,
+        questions: questions,
+        options: options,
+        data: optionPercentage,
+        votesCast: votesCast,
+        totalVoters: totalVoters,
+      });
+    }
   }
 );
 
