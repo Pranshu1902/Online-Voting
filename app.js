@@ -199,10 +199,21 @@ app.post(
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     if (!request.body.name) {
-      return response.flash("error", "Election name can't be empty");
+      request.flash("error", "Election name can't be empty");
+      return response.redirect("/elections/new");
     }
 
     const loggedInAdminID = request.user.id;
+
+    // validation checks
+    const election = await Election.findOne({
+      where: { adminID: loggedInAdminID, name: request.body.name },
+    });
+    if (election) {
+      request.flash("error", "Election name already used");
+      return response.redirect("/elections/new");
+    }
+
     try {
       await Election.add(loggedInAdminID, request.body.name);
       response.redirect("/home");
