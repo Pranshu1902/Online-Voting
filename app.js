@@ -276,6 +276,7 @@ app.get(
     response.render("editElection", {
       election: election,
       username: admin.name,
+      csrf: request.csrfToken(),
     });
   }
 );
