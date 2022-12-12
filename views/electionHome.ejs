@@ -36,11 +36,18 @@
 
       //delete voter
       function deleteVoter(electionID, id) {
+        var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+
         fetch(`/election/${electionID}/voter/${id}/delete`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            _csrf: token
+          })
         }).then(res => {
           if (res.ok) {
             window.location.reload();
