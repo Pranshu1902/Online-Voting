@@ -295,6 +295,23 @@ app.post(
       });
     }
 
+    const sameElection = await Election.findOne({
+      where: {
+        adminID: loggedInAdminID,
+        name: request.body.name,
+      },
+    });
+
+    if (sameElection) {
+      if (sameElection.id.toString() !== request.params.id) {
+        request.flash("error", "Election name already used");
+        return response.redirect(`/election/${request.params.id}/edit`);
+      } else {
+        request.flash("error", "No changes made");
+        return response.redirect(`/election/${request.params.id}/edit`);
+      }
+    }
+
     try {
       await Election.update(
         { name: request.body.name },
