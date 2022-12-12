@@ -54,13 +54,23 @@
               >
                 Update
               </button>
-              <button
+              <a
+                href="/election/<%= election.id %>/question/<%= question.id %>"
                 class="bg-gray-400 transition duration-200 border-2 border-black p-2 rounded-lg hover:bg-gray-600 px-6"
               >
                 Cancel
-              </button>
+              </a>
             </div>
           </form>
+
+          <!-- flash message -->
+          <div class="flex flex-col justify-center items-center gap-3 pt-4">
+            <% if (messages && messages.error && messages.error.length > 0) { %>
+              <% for(var i=0; i<messages.error.length; i++) {%>
+                <div class="bg-red-300 text-red-900 font-semibold p-2 rounded-lg shadow"> <%= messages.error[i] %></div>
+              <% } %>
+            <% } %>
+          </div>
         </div>
       </div>
     </div>

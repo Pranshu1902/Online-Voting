@@ -719,10 +719,17 @@ app.post(
       },
     });
     if (sameQuestion) {
-      request.flash("error", "Question name already used");
-      return response.redirect(
-        `/election/${request.params.electionID}/question/${request.params.questionID}/edit`
-      );
+      if (sameQuestion.id.toString() === request.params.questionID) {
+        request.flash("error", "Question name is same as before");
+        return response.redirect(
+          `/election/${request.params.electionID}/question/${request.params.questionID}/edit`
+        );
+      } else {
+        request.flash("error", "Question name already used");
+        return response.redirect(
+          `/election/${request.params.electionID}/question/${request.params.questionID}/edit`
+        );
+      }
     }
 
     try {
@@ -925,6 +932,27 @@ app.post(
       return response.render("error", {
         errorMessage: "Invalid request, election is already launched",
       });
+    }
+
+    const sameOption = await Option.findOne({
+      where: {
+        questionID: request.params.questionID,
+        value: request.body.value,
+      },
+    });
+
+    if (sameOption) {
+      if (sameOption.id.toString() !== request.params.optionID) {
+        request.flash("error", "Option already exists");
+        return response.redirect(
+          `/election/${request.params.electionID}/question/${request.params.questionID}/option/${request.params.optionID}/edit`
+        );
+      } else {
+        request.flash("error", "No changes made");
+        return response.redirect(
+          `/election/${request.params.electionID}/question/${request.params.questionID}/option/${request.params.optionID}/edit`
+        );
+      }
     }
 
     try {

@@ -59,11 +59,13 @@
               >
                 Update
               </button>
-              <button
+              <a
+                href="/election/<%= election.id %>/question/<%= question.id %>"
+                type="reset"
                 class="bg-gray-400 transition duration-200 border-2 border-black p-2 rounded-lg hover:bg-gray-600 px-6"
               >
                 Cancel
-              </button>
+              </a>
             </div>
           </form>
 
