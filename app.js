@@ -845,6 +845,14 @@ app.post(
       });
     }
 
+    const voter = await Voter.findByPk(request.params.voterID);
+
+    if (voter.voted) {
+      return response.render("error", {
+        errorMessage: "Invalid request, voter has already voted",
+      });
+    }
+
     try {
       await Voter.delete(request.params.voterID);
       return response.json({ ok: true });

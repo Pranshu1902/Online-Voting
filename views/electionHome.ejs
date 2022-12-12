@@ -235,7 +235,11 @@
                     <li class="text-xl"><%= voters[i].voterID %></li>
                     <% if (!election.ended) { %>
                       <div class="flex gap-4 justify-center items-center">
-                          <div onclick="deleteVoter(<%= election.id %>, <%= voters[i].id %>)"><i class="cursor-pointer fa fa-remove hover:text-red-500 transition duration-200"></i></div>
+                        <% if (voters[i].voted) { %>
+                          <div class="text-gray-600"><i class="fa fa-check"></i> Voted</div>
+                        <% } else { %>
+                          <div onclick="deleteVoter(<%= election.id %>, <%= voters[i].id %>)" class="cursor-pointer hover:text-red-500 transition duration-200"><i class="fa fa-remove"></i> Delete</div>
+                        <% } %>
                           <!-- <div onclick="deleteElection('<%= voters[i].id %>')"><i class="cursor-pointer fa fa-trash hover:text-red-500 transition duration-200"></i></div> -->
                       </div>
                     <% } %>
