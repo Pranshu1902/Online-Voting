@@ -115,6 +115,7 @@ app.get(
     response.render("adminHome", {
       username: admin.name,
       elections: elections,
+      csrf: request.csrfToken(),
     });
   }
 );

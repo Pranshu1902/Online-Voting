@@ -1,6 +1,8 @@
 <html>
   <head>
     <title>Online Voting Platform | Pranshu Aggarwal</title>
+    <meta name="csrf-token" content="<%= csrf %>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -12,10 +14,14 @@
     <script>
         // function to delete election
         function deleteElection(id) {
-            console.log("called");
+          var token = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content");
+
             fetch(`/election/${id}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ _csrf: token }),
             }).then((res) => {
             if (res.ok) {
               window.location.reload();
