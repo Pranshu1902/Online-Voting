@@ -250,7 +250,10 @@ app.get(
     const loggedInAdminID = request.user.id;
     const admin = await Admin.findByPk(loggedInAdminID);
 
-    response.render("newElection", { username: admin.name });
+    response.render("newElection", {
+      username: admin.name,
+      csrf: request.csrfToken(),
+    });
   }
 );
 
