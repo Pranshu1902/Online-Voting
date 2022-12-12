@@ -300,7 +300,7 @@ app.post(
         { name: request.body.name },
         { where: { id: request.params.id } }
       );
-      response.redirect("/home");
+      response.redirect(`/election/${request.params.id}`);
     } catch (error) {
       console.log(error);
       return response.send(error);
