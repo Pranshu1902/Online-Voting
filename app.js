@@ -11,6 +11,7 @@ const session = require("express-session");
 const localStrategy = require("passport-local");
 const passport = require("passport");
 const flash = require("connect-flash");
+const csrf = require("tiny-csrf");
 
 const saltRounds = 10;
 
@@ -18,6 +19,7 @@ app.use(flash());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("ssh! some secret string!"));
+app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
