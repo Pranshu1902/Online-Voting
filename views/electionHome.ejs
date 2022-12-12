@@ -1,6 +1,8 @@
 <html>
   <head>
     <title><%= %>Online Voting Platform | Pranshu Aggarwal</title>
+    <meta name="csrf-token" content="<%= csrf %>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -147,6 +149,7 @@
               method="post"
               class="flex flex-col md:flex-row gap-4 pt-2"
             >
+              <input type="hidden" value="<%= csrf %>" name="_csrf">
               <div class="flex flex-col">
                 <input
                   type="text"
@@ -199,6 +202,7 @@
             method="post"
             class="flex flex-col md:flex-row gap-4 pt-2"
           >
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
             <div class="flex flex-col">
               <input
                 type="text"

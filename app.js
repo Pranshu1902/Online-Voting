@@ -160,6 +160,7 @@ app.get(
       username: admin.name,
       questions: questions,
       voters: voters,
+      csrf: request.csrfToken(),
     });
   }
 );
