@@ -29,11 +29,17 @@
       <div class="flex flex-col justify-center md:w-2/5 w-full">
         <hr />
         <div class="pt-6">
-          <a
-            href="/election/<%= election.id %>"
-            class="font-bold text-4xl hover:underline"
-            ><%= election.name %>'s Result</a
-          >
+          <% if (admin) { %>
+            <a
+              href="/election/<%= election.id %>"
+              class="font-bold text-4xl hover:underline"
+              ><%= election.name %>'s Result</a
+            >
+          <% } else { %>
+            <p class="font-bold text-4xl"
+              ><%= election.name %>'s Result</
+            >
+          <% } %>
           <p class="pt-2 text-gray-600 text-xl"><%= votesCast %> / <%= totalVoters %> Votes Cast</p>
         </div>
 
