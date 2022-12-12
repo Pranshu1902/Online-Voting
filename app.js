@@ -11,7 +11,6 @@ const session = require("express-session");
 const localStrategy = require("passport-local");
 const passport = require("passport");
 const flash = require("connect-flash");
-const voter = require("./models/voter");
 
 const saltRounds = 10;
 
