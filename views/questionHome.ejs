@@ -13,11 +13,16 @@
     />
     <script>
         function deleteOption(id) {
+          var token = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content");
+
             fetch(`/election/<%= election.id %>/question/<%= question.id %>/option/${id}`, {
                 method: "DELETE",
                 headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({ _csrf: token })
             }).then(res => {
                     if (res.ok === true) {
                         window.location.reload()
