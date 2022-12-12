@@ -40,57 +40,57 @@ describe("first", () => {
     expect(login.statusCode).toBe(200);
   });
 
-  test("signup admin", async () => {
-    const res = await agent.post("/users").send({
-      name: "admin",
-      email: "test@user.com",
-      password: "12345678",
-    });
-    expect(res.statusCode).toBe(302);
-  });
+  // test("signup admin", async () => {
+  //   const res = await agent.post("/users").send({
+  //     name: "admin",
+  //     email: "test@user.com",
+  //     password: "12345678",
+  //   });
+  //   expect(res.statusCode).toBe(302);
+  // });
 
-  test("create election", async () => {
-    let count, newCount;
-    const response = await agent.get("/election");
-    count = response.body.elections.length;
+  // test("create election", async () => {
+  //   let count, newCount;
+  //   const response = await agent.get("/election");
+  //   count = response.body.elections.length;
 
-    await agent.post("/election").send({
-      name: "test election",
-    });
+  //   await agent.post("/election").send({
+  //     name: "test election",
+  //   });
 
-    await agent.get("/election").then((data) => {
-      newCount = data.body.elections.length;
-    });
-    expect(newCount).toBe(count + 1);
-  });
+  //   await agent.get("/election").then((data) => {
+  //     newCount = data.body.elections.length;
+  //   });
+  //   expect(newCount).toBe(count + 1);
+  // });
 
-  test("delete election", async () => {
-    let count;
-    const response = await agent.get("/election");
-    count = response.body.elections.length;
+  // test("delete election", async () => {
+  //   let count;
+  //   const response = await agent.get("/election");
+  //   count = response.body.elections.length;
 
-    const electionID = response.body.elections[count - 1].id;
+  //   const electionID = response.body.elections[count - 1].id;
 
-    const res = await agent.delete(`/election/${electionID}`);
+  //   const res = await agent.delete(`/election/${electionID}`);
 
-    expect(res.statusCode).toBe(200);
-  });
+  //   expect(res.statusCode).toBe(200);
+  // });
 
-  test("edit election", async () => {
-    await agent.post("/election").send({
-      name: "update election",
-    });
-    let count;
-    let response = await agent.get("/election");
-    count = response.body.elections.length;
+  // test("edit election", async () => {
+  //   await agent.post("/election").send({
+  //     name: "update election",
+  //   });
+  //   let count;
+  //   let response = await agent.get("/election");
+  //   count = response.body.elections.length;
 
-    const electionID = response.body.elections[count - 1].id;
+  //   const electionID = response.body.elections[count - 1].id;
 
-    await agent.post(`/election/${electionID}`).send({ name: "New Name" });
+  //   await agent.post(`/election/${electionID}`).send({ name: "New Name" });
 
-    response = await agent.get("/election");
-    expect(response.body.elections[count - 1].name).toBe("New Name");
-  });
+  //   response = await agent.get("/election");
+  //   expect(response.body.elections[count - 1].name).toBe("New Name");
+  // });
 
   test("signout admin", async () => {
     login();
