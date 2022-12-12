@@ -89,7 +89,7 @@ app.get("/", (request, response) => {
 
 // signup page frontend
 app.get("/signup", (request, response) => {
-  response.render("signup");
+  response.render("signup", { csrf: request.csrfToken() });
 });
 
 // login page frontend
@@ -97,7 +97,7 @@ app.get("/login", (request, response) => {
   if (request.user && request.user.id) {
     return response.redirect("/home");
   }
-  response.render("login");
+  response.render("login", { csrf: request.csrfToken() });
 });
 
 // admin home page frontend
