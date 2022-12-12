@@ -14,11 +14,19 @@
     <script>
       // end election API
       function endElection(id) {
+        var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+
         fetch(`/election/${id}/end`, {
           method: "PUT",
+          _csrf: "<%= csrf%>",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            _csrf: token
+          })
         }).then((res) => {
           if (res.ok) {
             window.location.reload();

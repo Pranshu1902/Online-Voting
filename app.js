@@ -1015,23 +1015,24 @@ app.get("/election/:id/vote", async (request, response) => {
     return response.redirect(`/election/${request.params.id}/result`);
   }
 
-  if (voter.voted) {
-    response.render("vote", {
-      election: election,
-      questions: questions,
-      options: options,
-      verified: true,
-      submitted: true,
-    });
-  } else {
-    response.render("vote", {
-      election: election,
-      questions: questions,
-      options: options,
-      verified: false,
-      submitted: false,
-    });
-  }
+  // if (voter.voted) {
+  //   response.render("vote", {
+  //     election: election,
+  //     questions: questions,
+  //     options: options,
+  //     verified: true,
+  //     submitted: true,
+  //   });
+  // } else {
+  response.render("vote", {
+    election: election,
+    questions: questions,
+    options: options,
+    verified: false,
+    submitted: false,
+    csrf: request.csrfToken(),
+  });
+  // }
 });
 
 // login voter
@@ -1096,6 +1097,7 @@ app.post("/election/:id/vote", async (request, response) => {
           verified: true,
           voter: voter,
           submitted: true,
+          csrf: request.csrfToken(),
         });
       } else {
         response.render("vote", {
@@ -1105,6 +1107,7 @@ app.post("/election/:id/vote", async (request, response) => {
           verified: true,
           voter: voter,
           submitted: false,
+          csrf: request.csrfToken(),
         });
       }
     } else {
