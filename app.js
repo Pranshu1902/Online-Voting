@@ -989,19 +989,6 @@ app.post(
 // cast vote frontend
 app.get("/election/:id/vote", async (request, response) => {
   const election = await Election.findByPk(request.params.id);
-  const questions = await question.findAll({
-    where: {
-      electionID: request.params.id,
-    },
-  });
-  const options = [];
-
-  for (let i = 0; i < questions.length; i++) {
-    const allOption = await Option.findAll({
-      where: { questionID: questions[i].id },
-    });
-    options.push(allOption);
-  }
 
   if (election.launched === false) {
     console.log("Election not launched");
@@ -1016,24 +1003,14 @@ app.get("/election/:id/vote", async (request, response) => {
     return response.redirect(`/election/${request.params.id}/result`);
   }
 
-  // if (voter.voted) {
-  //   response.render("vote", {
-  //     election: election,
-  //     questions: questions,
-  //     options: options,
-  //     verified: true,
-  //     submitted: true,
-  //   });
-  // } else {
   response.render("vote", {
     election: election,
-    questions: questions,
-    options: options,
+    questions: [],
+    options: [],
     verified: false,
     submitted: false,
     csrf: request.csrfToken(),
   });
-  // }
 });
 
 // login voter
@@ -1098,7 +1075,7 @@ app.post("/election/:id/vote", async (request, response) => {
           verified: true,
           voter: voter,
           submitted: true,
-          csrf: request.csrfToken(),
+          csrf: request.body._csrf,
         });
       } else {
         response.render("vote", {
@@ -1108,7 +1085,7 @@ app.post("/election/:id/vote", async (request, response) => {
           verified: true,
           voter: voter,
           submitted: false,
-          csrf: request.csrfToken(),
+          csrf: request.body._csrf,
         });
       }
     } else {

@@ -1,6 +1,8 @@
 <html>
   <head>
     <title><%= %>Vote | <%= election.name %> | Online Voting Platform</title>
+    <meta name="csrf-token" content="<%= csrf %>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -10,7 +12,9 @@
       referrerpolicy="no-referrer"
     />
   </head>
-  <body class="bg-gradient-to-tl from-gray-200 to-green-500 min-h-screen w-full">
+  <body
+    class="bg-gradient-to-tl from-gray-200 to-green-500 min-h-screen w-full"
+  >
     <div class="flex justify-center text-blue-800">
       <%- include ('header') %>
     </div>
@@ -23,86 +27,21 @@
 
         <% if (election.ended) { %>
             <div class="flex justify-center">
-                <p class="text-2xl text-gray-600">This election has ended.</p>
+            <p class="text-2xl text-gray-600">This election has ended.</p>
             </div>
         <% } else if (!election.launched) { %>
             <div class="flex justify-center">
-                <p class="text-2xl text-gray-600">This election has not been launched yet.</p>
+            <p class="text-2xl text-gray-600">
+                This election has not been launched yet.
+            </p>
             </div>
         <% } else { %>
             <div class="flex flex-col gap-4">
-
-                <!-- Voter authentication -->
-                <% if (!verified) { %>
-                    <form action="/election/<%= election.id %>/vote" method="post" class="flex flex-col gap-4 justify-center items-center">
-                        <div class="flex flex-col gap-2">
-                            <label for="voterID">Voter ID</label>
-                            <input
-                            class="border-2 flex items-center border-black p-2 rounded-lg"
-                            id="voterID"
-                            placeholder="Voter ID"
-                            type="text"
-                            name="voterID"
-                            />
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <label for="password">Password</label>
-                            <input
-                            class="border-2 flex items-center border-black p-2 rounded-lg"
-                            id="password"
-                            type="password"
-                            placeholder="Password"
-                            name="password"
-                            />
-                        </div>
-                        <button class="flex justify-center mt-4 p-2 rounded-lg bg-purple-500 hover:bg-purple-700 border-2 border-purple-800">Submit</button>
-                    </form>
-
-                    <!-- flash message -->
-                    <div class="flex flex-col justify-center items-center gap-3 pt-4">
-                        <% if (messages && messages.error && messages.error.length > 0) { %>
-                        <% for(var i=0; i<messages.error.length; i++) {%>
-                            <div class="bg-red-300 text-red-900 font-semibold p-2 rounded-lg shadow"> <%= messages.error[i] %></div>
-                        <% } %>
-                        <% } %>
-                    </div>
-                <% } else { %>
-                    <!-- Ballot -->
-                    <div>
-                        <p class="text-xl">Voter ID: <b><%= voter.voterID %></b></p>
-                    </div>
-
-                    <% if (submitted) { %>
-                        <p class="flex justify-center text-2xl text-gray-600 pt-8">Thank you for participating in the election!</p>
-                    <% } else { %>
-                        <form action="/election/<%= election.id %>/voter/<%= voter.id %>/submit" method="post" class="pt-6">
-                            <% for (var i=0; i<questions.length; i++) { %>
-                                <div>
-                                    <p class="font-bold text-xl"><%= i+1 %>. <%= questions[i].title %></p>
-                                    <p class="text-gray-600"><%= questions[i].description %></p>
-
-                                    <div class="pt-2 pl-6">
-                                        <fieldset id="question-<%= questions[i].id %>">
-                                            <% for (var j=0; j<options[i].length; j++) { %>
-                                                <div class="flex gap-2">
-                                                    <input
-                                                        class="border-2 flex items-center border-black p-2 rounded-lg"
-                                                        id="question-<%= questions[i].id %>-<%= options[i][j].id %>"
-                                                        type="radio"
-                                                        value="<%= options[i][j].id %>"
-                                                        name="question-<%= questions[i].id %>"
-                                                    />
-                                                    <label for="question-<%= questions[i].id %>-<%= options[i][j].id %>"><%= options[i][j].value %></label>
-                                                </div>
-                                            <% } %>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            <% } %>
-                            <button class="flex justify-center items-center w-full mt-8 p-2 rounded-lg bg-blue-500 hover:bg-blue-700 border-2 border-blue-800 text-white font-bold">Submit</button>
-                        </form>
-                    <% } %>
-                <% } %>
+            <% if (verified) { %>
+              <%- include ('Ballot.ejs', {election: election, voter: voter}) %>
+            <% } else { %>
+              <%- include ('voterLogin.ejs', {election: election}) %>
+            <% } %>
             </div>
         <% } %>
       </div>
