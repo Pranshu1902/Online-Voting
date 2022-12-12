@@ -82,7 +82,7 @@ To run tests, run the following command
 
 **Live Election Admin Page:**
 
-<img src="https://user-images.githubusercontent.com/70687348/206869762-46c69569-b637-49c5-b035-01deaa84cd03.png" style="width:400px;" />
+<img src="https://user-images.githubusercontent.com/70687348/207037997-a9df7c23-4bc9-492e-a137-18b8524266ea.png" style="width:400px;" />
 
 **Voter Login Page:**
 
