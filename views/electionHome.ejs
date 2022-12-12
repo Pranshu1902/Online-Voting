@@ -47,10 +47,17 @@
       <div class="flex flex-col justify-center md:w-2/5 w-full">
         <hr />
 
-        <!-- Election ended notification -->
-        <div class="flex justify-center items-center mt-4 p-2 rounded-lg bg-red-400 border-2 border-red-500 gap-2 text-white font-bold">
-          <i class="fa fa-exclamation-triangle"></i> Election Ended
-        </div>
+        <% if (election.ended) { %>
+          <!-- Election ended banner -->
+          <div class="flex justify-center items-center mt-4 p-2 rounded-lg bg-red-400 border-2 border-red-500 gap-2 text-white font-bold">
+            <i class="fa fa-exclamation-triangle"></i> Election Ended
+          </div>
+        <% } else if (election.launched) { %>
+          <!-- Election live banner -->
+          <div class="flex justify-center items-center mt-4 p-2 rounded-lg bg-blue-500 border-2 border-blue-700 gap-2 text-white font-bold">
+            <i class="fa fa-exclamation-triangle"></i> Election is Live
+          </div>
+        <% } %>
                 
         <div class="flex flex-col md:flex-row justify-between gap-4 pt-4">
           <div>
