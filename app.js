@@ -986,57 +986,57 @@ app.post(
 );
 
 // cast vote frontend
-app.get("/election/:id/vote", async (request, response) => {
-  const election = await Election.findByPk(request.params.id);
-  const questions = await question.findAll({
-    where: {
-      electionID: request.params.id,
-    },
-  });
-  const options = [];
+// app.get("/election/:id/vote", async (request, response) => {
+//   const election = await Election.findByPk(request.params.id);
+//   const questions = await question.findAll({
+//     where: {
+//       electionID: request.params.id,
+//     },
+//   });
+//   const options = [];
 
-  for (let i = 0; i < questions.length; i++) {
-    const allOption = await Option.findAll({
-      where: { questionID: questions[i].id },
-    });
-    options.push(allOption);
-  }
+//   for (let i = 0; i < questions.length; i++) {
+//     const allOption = await Option.findAll({
+//       where: { questionID: questions[i].id },
+//     });
+//     options.push(allOption);
+//   }
 
-  if (election.launched === false) {
-    console.log("Election not launched");
-    return response.render("error", {
-      errorMessage: "Election not launched yet",
-    });
-  }
+//   if (election.launched === false) {
+//     console.log("Election not launched");
+//     return response.render("error", {
+//       errorMessage: "Election not launched yet",
+//     });
+//   }
 
-  // redirect to results page if election is over
-  if (election.ended === true) {
-    console.log("Election ended");
-    return response.redirect(`/election/${request.params.id}/result`);
-  }
+//   // redirect to results page if election is over
+//   if (election.ended === true) {
+//     console.log("Election ended");
+//     return response.redirect(`/election/${request.params.id}/result`);
+//   }
 
-  // if (voter.voted) {
-  //   response.render("vote", {
-  //     election: election,
-  //     questions: questions,
-  //     options: options,
-  //     verified: true,
-  //     submitted: true,
-  //   });
-  // } else {
-  response.render("vote", {
-    election: election,
-    questions: questions,
-    options: options,
-    verified: false,
-    submitted: false,
-    csrf: request.csrfToken(),
-  });
-  // }
-});
+//   // if (voter.voted) {
+//   //   response.render("vote", {
+//   //     election: election,
+//   //     questions: questions,
+//   //     options: options,
+//   //     verified: true,
+//   //     submitted: true,
+//   //   });
+//   // } else {
+//   response.render("vote", {
+//     election: election,
+//     questions: questions,
+//     options: options,
+//     verified: false,
+//     submitted: false,
+//     csrf: request.csrfToken(),
+//   });
+//   // }
+// });
 
 // login voter
-app.post("/election/:id/vote", async (request, response) => {
+app.get("/election/:id/vote", async (request, response) => {
   const election = await Election.findByPk(request.params.id);
 
   if (election.launched === false) {
@@ -1050,6 +1050,26 @@ app.post("/election/:id/vote", async (request, response) => {
     console.log("Election ended");
     return response.render("error", {
       errorMessage: "Election has ended",
+    });
+  }
+
+  const token = request.body._csrf ? request.body._csrf : request.csrfToken();
+
+  console.log(request.body._csrf);
+  console.log("==============================");
+  console.log(request.body.voterID);
+  console.log("==============================");
+
+  // render login
+  if (!request.body.voterID) {
+    response.render("vote", {
+      election: election,
+      questions: [],
+      options: [],
+      verified: false,
+      voter: [],
+      submitted: false,
+      csrf: token,
     });
   }
 
@@ -1097,7 +1117,7 @@ app.post("/election/:id/vote", async (request, response) => {
           verified: true,
           voter: voter,
           submitted: true,
-          csrf: request.csrfToken(),
+          csrf: token,
         });
       } else {
         response.render("vote", {
@@ -1107,7 +1127,7 @@ app.post("/election/:id/vote", async (request, response) => {
           verified: true,
           voter: voter,
           submitted: false,
-          csrf: request.csrfToken(),
+          csrf: token,
         });
       }
     } else {
@@ -1124,6 +1144,7 @@ app.post("/election/:id/vote", async (request, response) => {
 app.post(
   "/election/:electionID/voter/:id/submit",
   async (request, response) => {
+    console.log(request);
     const election = await Election.findByPk(request.params.electionID);
 
     // validation checks
