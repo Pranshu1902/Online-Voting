@@ -498,6 +498,7 @@ app.get(
       question: Question,
       election: election,
       options: options,
+      csrf: request.csrfToken(),
     });
   }
 );
