@@ -900,6 +900,7 @@ app.get(
       election: election,
       question: Question,
       option: option,
+      csrf: request.csrfToken(),
     });
   }
 );
