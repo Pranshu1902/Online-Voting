@@ -768,6 +768,7 @@ app.get(
       username: admin.name,
       election: election,
       question: Question,
+      csrf: request.csrfToken(),
     });
   }
 );

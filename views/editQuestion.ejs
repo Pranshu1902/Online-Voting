@@ -1,6 +1,8 @@
 <html>
   <head>
     <title>Edit Question | Online Voting Platform</title>
+    <meta name="csrf-token" content="<%= csrf %>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -31,6 +33,7 @@
             action="/election/<%= election.id %>/question/<%= question.id %>/update"
             class="flex flex-col gap-4 pt-4"
           >
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
             <div class="flex flex-col w-full">
               <input
                 type="text"
