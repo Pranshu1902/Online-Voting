@@ -109,10 +109,204 @@ describe("first", () => {
     const newToken = extractCsrfToken(electionPage);
     await agent
       .post(`/election/${electionID}`)
-      .send({ name: "New Name", _csrf: newToken });
+      .send({ name: "Election 1", _csrf: newToken });
 
     response = await agent.get("/election");
-    expect(response.body.elections[count - 1].name).toBe("New Name");
+    expect(response.body.elections[count - 1].name).toBe("Election 1");
+  });
+
+  test("add question", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+    const res = await agent.get(`/election/${electionID}`);
+    const token = extractCsrfToken(res);
+
+    const result = await agent
+      .post(`/election/${electionID}/questions/add`)
+      .send({
+        title: "Question 1",
+        description: "This is description",
+        _csrf: token,
+      });
+
+    expect(result.statusCode).toBe(302);
+  });
+
+  test("edit question", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    const questions = await agent.get(`/election/${electionID}/questions`);
+    const questionID = questions._body[0].id;
+
+    const res = await agent.get(`/election/${electionID}`);
+    const token = extractCsrfToken(res);
+
+    const result = await agent
+      .post(`/election/${electionID}/question/${questionID}/update`)
+      .send({
+        title: "Question 1",
+        description: "This is edited description",
+        _csrf: token,
+      });
+
+    expect(result.statusCode).toBe(302);
+  });
+
+  test("delete question", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    const addRes = await agent.get(`/election/${electionID}`);
+    const addToken = extractCsrfToken(addRes);
+
+    await agent.post(`/election/${electionID}/questions/add`).send({
+      title: "Question 3",
+      description: "This is description",
+      _csrf: addToken,
+    });
+
+    const questions = await agent.get(`/election/${electionID}/questions`);
+    const questionID = questions._body[0].id;
+
+    const res = await agent.get(`/election/${electionID}`);
+    const token = extractCsrfToken(res);
+
+    const result = await agent
+      .delete(`/election/${electionID}/question/${questionID}`)
+      .send({
+        _csrf: token,
+      });
+
+    expect(result.statusCode).toBe(200);
+  });
+
+  test("add option to question", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    const questions = await agent.get(`/election/${electionID}/questions`);
+    const questionID = questions._body[0].id;
+
+    const res = await agent.get(`/election/${electionID}`);
+    const token = extractCsrfToken(res);
+
+    const result = await agent
+      .post(`/election/${electionID}/question/${questionID}/options/add`)
+      .send({
+        option: "Option 1",
+        _csrf: token,
+      });
+
+    // adding 2nd option
+    const res2 = await agent.get(`/election/${electionID}`);
+    const token2 = extractCsrfToken(res2);
+
+    await agent
+      .post(`/election/${electionID}/question/${questionID}/options/add`)
+      .send({
+        option: "Option 1",
+        _csrf: token2,
+      });
+
+    expect(result.statusCode).toBe(302);
+  });
+
+  test("delete option", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    const questions = await agent.get(`/election/${electionID}/questions`);
+    const questionID = questions._body[0].id;
+
+    const res2 = await agent.get(`/election/${electionID}`);
+    const token2 = extractCsrfToken(res2);
+
+    await agent
+      .post(`/election/${electionID}/question/${questionID}/options/add`)
+      .send({
+        option: "Option 1",
+        _csrf: token2,
+      });
+
+    const res = await agent.get(`/election/${electionID}`);
+    const token = extractCsrfToken(res);
+
+    const result = await agent
+      .delete(`/election/${electionID}/question/${questionID}/option/1`)
+      .send({
+        _csrf: token,
+      });
+
+    expect(result.statusCode).toBe(200);
+  });
+
+  test("add voter to election", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    const res = await agent.get(`/election/${electionID}`);
+    const token = extractCsrfToken(res);
+
+    const result = await agent.post(`/election/${electionID}/voters/add`).send({
+      voterID: "student 1",
+      password: "12345678",
+      _csrf: token,
+    });
+
+    expect(result.statusCode).toBe(302);
+  });
+
+  test("launch election", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    const res = await agent.get(`/election/${electionID}`);
+    const token = extractCsrfToken(res);
+
+    const result = await agent.get(`/election/${electionID}/launch`).send({
+      _csrf: token,
+    });
+
+    expect(result.statusCode).toBe(302);
+  });
+
+  test("end election", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    const res = await agent.get(`/election/${electionID}`);
+    const token = extractCsrfToken(res);
+
+    const result = await agent.put(`/election/${electionID}/end`).send({
+      _csrf: token,
+    });
+
+    expect(result.ok).toBe(true);
   });
 
   test("signout admin", async () => {

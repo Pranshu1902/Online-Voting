@@ -403,6 +403,19 @@ app.post("/users", async (request, response) => {
   }
 });
 
+// get questions of election
+app.get(
+  "/election/:id/questions",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const allQuestions = await question.findAll({
+      where: { electionID: request.params.id },
+    });
+
+    return response.send(allQuestions);
+  }
+);
+
 // add question to election
 app.post(
   "/election/:id/questions/add",
@@ -543,6 +556,23 @@ app.get(
       options: options,
       csrf: request.csrfToken(),
     });
+  }
+);
+
+// get options
+app.get(
+  "/election/:electionID/question/:questionID/options",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    // const adminID = request.user.id;
+    // const election = await Election.findByPk(request.params.electionID);
+
+    // const questions = await question.findByPk(request.params.questionID);
+
+    const options = await Option.findAll({
+      where: { questionID: request.params.questionID },
+    });
+    return response.send(options);
   }
 );
 
