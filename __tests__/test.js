@@ -76,6 +76,44 @@ describe("first", () => {
     expect(newCount).toBe(count + 1);
   });
 
+  test("end election", async () => {
+    let count, newCount;
+    const addElection = await agent.get("/elections/new");
+    const token = extractCsrfToken(addElection);
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    await agent.post("/election").send({
+      name: "test election launch",
+      _csrf: token,
+    });
+
+    await agent.get("/election").then((data) => {
+      newCount = data.body.elections.length;
+    });
+    expect(newCount).toBe(count + 1);
+
+    const res2 = await agent.get(`/election/${electionID}`);
+    const token2 = extractCsrfToken(res2);
+
+    const result2 = await agent.get(`/election/${electionID}/launch`).send({
+      _csrf: token2,
+    });
+
+    expect(result2.statusCode).toBe(302);
+
+    const res = await agent.get(`/election/${electionID}`);
+    const token3 = extractCsrfToken(res);
+
+    const result = await agent.put(`/election/${electionID}/end`).send({
+      _csrf: token3,
+    });
+
+    expect(result.ok).toBe(true);
+  });
+
   test("delete election", async () => {
     let count;
     const response = await agent.get("/election");
@@ -224,6 +262,53 @@ describe("first", () => {
     expect(result.statusCode).toBe(302);
   });
 
+  test("edit option", async () => {
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    const questions = await agent.get(`/election/${electionID}/questions`);
+    const questionCount = questions._body.length;
+    const questionID = questions._body[questionCount - 1].id;
+
+    // const res = await agent.get(`/election/${electionID}`);
+    // const token = extractCsrfToken(res);
+
+    // const addOptionRes = await agent
+    //   .post(`/election/${electionID}/question/${questionID}/options/add`)
+    //   .send({
+    //     option: "Option New",
+    //     _csrf: token,
+    //   });
+
+    // expect(addOptionRes.statusCode).toBe(302);
+
+    const optionsRes = await agent.get(
+      `/election/${electionID}/question/${questionID}/options`
+    );
+    const options = optionsRes.text;
+    const optionCount = options.length;
+    const optionID = options[optionCount - 1].id;
+
+    const res2 = await agent.get(
+      `/election/${electionID}/question/${questionID}/option/${optionID}/edit`
+    );
+    const token2 = extractCsrfToken(res2);
+
+    const updateRes = await agent
+      .post(
+        `/election/${electionID}/question/${questionID}/option/${optionID}/update`
+      )
+      .send({
+        value: "Edited New Option 1",
+        _csrf: token2,
+      });
+
+    expect(updateRes.statusCode).toBe(302);
+  });
+
   test("delete option", async () => {
     let count;
     const response = await agent.get("/election");
@@ -292,21 +377,25 @@ describe("first", () => {
     expect(result.statusCode).toBe(302);
   });
 
-  test("end election", async () => {
+  test("login voter", async () => {
     let count;
     const response = await agent.get("/election");
     count = response.body.elections.length;
 
     const electionID = response.body.elections[count - 1].id;
 
-    const res = await agent.get(`/election/${electionID}`);
-    const token = extractCsrfToken(res);
+    await agent.get("/signout");
 
-    const result = await agent.put(`/election/${electionID}/end`).send({
+    const votePage = await agent.get(`/election/${electionID}/vote`);
+    const token = extractCsrfToken(votePage);
+
+    const res = await agent.post(`/election/${electionID}/vote`).send({
+      voterID: "student 1",
+      password: "12345678",
       _csrf: token,
     });
 
-    expect(result.ok).toBe(true);
+    expect(res.statusCode).toBe(302);
   });
 
   test("signout admin", async () => {
