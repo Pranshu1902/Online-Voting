@@ -34,16 +34,6 @@ app.use(
   })
 );
 
-// voter ID session storage
-// app.use(
-//   session({
-//     secret: "my-super-secret-key-2178172615261561",
-//     cookie: {
-//       maxAge: 1 * 60 * 60 * 1000,
-//     },
-//   })
-// );
-
 app.use(function (request, response, next) {
   response.locals.messages = request.flash();
   next();
@@ -52,6 +42,7 @@ app.use(function (request, response, next) {
 app.use(passport.initialize());
 app.use(passport.session());
 
+// admin ID passport session
 passport.use(
   "user-local",
   new localStrategy(
@@ -111,62 +102,9 @@ passport.serializeUser((user, done) => {
   done(null, user);
 });
 
-// passport.serializeUser((user, done) => {
-//   if (isUser(user)) {
-//     done(null, user.id);
-//   } else if (isSponsor(user)) {
-//     done(null, user.voterID);
-//   }
-// });
-
-// passport.deserializeUser((id, done) => {
-//   console.log("searchin in admin deserializer");
-//   Admin.findByPk(id)
-//     .then((user) => {
-//       done(null, user);
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//       done("pass");
-//     });
-// });
-
 passport.deserializeUser((obj, done) => {
-  console.log(obj);
   done(null, obj);
-  // if (obj.voterID) {
-  //   console.log("searchin in voter deserializer");
-  //   Voter.findByPk(obj.id)
-  //     .then((voter) => {
-  //       done(null, voter);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       done(error, null);
-  //     });
-  // } else {
-  //   console.log("searchin in admin deserializer");
-  //   Admin.findByPk(obj.id)
-  //     .then((user) => {
-  //       done(null, user);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       done(error, null);
-  //     });
-  // }
 });
-
-// passport.deserializeUser((id, done) => {
-//   console.log("voter deserializer reached");
-//   Voter.findByPk(id)
-//     .then((voter) => {
-//       done(null, voter);
-//     })
-//     .catch((error) => {
-//       done(error, null);
-//     });
-// });
 
 // home page
 app.get("/", (request, response) => {
@@ -1061,7 +999,6 @@ app.post(
 
     try {
       await Option.edit(request.body.value, request.params.optionID);
-      // return response.json({ ok: true });
       response.redirect(
         `/election/${request.params.electionID}/question/${request.params.questionID}`
       );
@@ -1074,13 +1011,6 @@ app.post(
 
 // cast vote frontend
 app.get("/election/:id/vote", async (request, response) => {
-  // logout previous users
-  // request.logout((err) => {
-  //   if (err) {
-  //     return next(err);
-  //   }
-  // });
-
   const election = await Election.findByPk(request.params.id);
 
   if (election.launched === false) {
@@ -1109,11 +1039,6 @@ app.get("/election/:id/vote", async (request, response) => {
     });
     options.push(allOption);
   }
-
-  console.log("================================");
-  console.log(request.isAuthenticated());
-  console.log(request.usedStrategy);
-  console.log("================================");
 
   if (request.user && request.user.id) {
     const voter = await Voter.findByPk(request.user.id);
@@ -1145,89 +1070,6 @@ app.post(
   passport.authenticate("voter-local", { failureFlash: true }),
   function (request, response) {
     return response.redirect(`/election/${request.params.id}/vote`);
-    // const election = await Election.findByPk(request.params.id);
-
-    // if (election.launched === false) {
-    //   console.log("Election not launched");
-    //   return response.render("error", {
-    //     errorMessage: "Election not launched yet",
-    //   });
-    // }
-
-    // if (election.ended === true) {
-    //   console.log("Election ended");
-    //   return response.render("error", {
-    //     errorMessage: "Election has ended",
-    //   });
-    // }
-
-    // try {
-    //   const voter = await Voter.findOne({
-    //     where: {
-    //       electionID: request.params.id,
-    //       voterID: request.body.voterID,
-    //     },
-    //   });
-
-    //   // invalid Voter ID
-    //   if (!voter) {
-    //     request.flash("error", "Invalid Voter ID");
-    //     return response.redirect(`/election/${election.id}/vote`);
-    //   }
-
-    //   const voterVerified = await bcrypt.compare(
-    //     request.body.password,
-    //     voter.password
-    //   );
-
-    //   // invalid password
-    //   if (voterVerified) {
-    //     // render election
-    //     const questions = await question.findAll({
-    //       where: {
-    //         electionID: request.params.id,
-    //       },
-    //     });
-    //     const options = [];
-
-    //     for (let i = 0; i < questions.length; i++) {
-    //       const allOption = await Option.findAll({
-    //         where: { questionID: questions[i].id },
-    //       });
-    //       options.push(allOption);
-    //     }
-
-    //     return response.redirect(`/election/${election.id}/vote`);
-
-    //     // if (voter.voted) {
-    //     //   response.render("vote", {
-    //     //     election: election,
-    //     //     questions: questions,
-    //     //     options: options,
-    //     //     verified: true,
-    //     //     voter: voter,
-    //     //     submitted: true,
-    //     //     csrf: request.body._csrf,
-    //     //   });
-    //     // } else {
-    //     //   response.render("vote", {
-    //     //     election: election,
-    //     //     questions: questions,
-    //     //     options: options,
-    //     //     verified: true,
-    //     //     voter: voter,
-    //     //     submitted: false,
-    //     //     csrf: request.body._csrf,
-    //     //   });
-    //     // }
-    //   } else {
-    //     request.flash("error", "Invalid password");
-    //     return response.redirect(`/election/${election.id}/vote`);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    //   return response.send(error);
-    // }
   }
 );
 
@@ -1253,8 +1095,6 @@ app.post(
     }
 
     try {
-      // const voter = await Voter.findByPk(request.params.id);
-
       const questions = await question.findAll({
         where: {
           electionID: request.params.electionID,
@@ -1275,15 +1115,6 @@ app.post(
       await Voter.markVoted(request.params.id);
 
       // render thank you message
-      // response.render("vote", {
-      //   election: election,
-      //   questions: [],
-      //   options: [],
-      //   verified: true,
-      //   voter: voter,
-      //   submitted: true,
-      // });
-
       return response.redirect(`/election/${election.id}/vote`);
     } catch (error) {
       console.log(error);
@@ -1424,18 +1255,5 @@ app.post(
     response.redirect("/home");
   }
 );
-
-// // voter login session
-// app.post(
-//   "/election/:id/vote/login",
-//   passport.authenticate("local", {
-//     failureRedirect: `/`,
-//     failureFlash: true,
-//   }),
-//   function (request, response) {
-//     console.log("Voter logged in");
-//     response.redirect(`/`);
-//   }
-// );
 
 module.exports = app;
