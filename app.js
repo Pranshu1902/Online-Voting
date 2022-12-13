@@ -34,6 +34,16 @@ app.use(
   })
 );
 
+// voter ID session storage
+app.use(
+  session({
+    secret: "my-super-secret-key-2178172615261561",
+    cookie: {
+      maxAge: 1 * 60 * 60 * 1000,
+    },
+  })
+);
+
 app.use(function (request, response, next) {
   response.locals.messages = request.flash();
   next();
@@ -67,6 +77,33 @@ passport.use(
     }
   )
 );
+
+// voter ID passport session
+// passport.use(
+//   new localStrategy(
+//     {
+//       usernameField: "voterID",
+//       passwordField: "password",
+//     },
+//     (username, password, done) => {
+//       Voter.findOne({ where: { voterID: username, electionID: electionID } })
+//         .then(async (user) => {
+//           const result = await bcrypt.compare(password, user.password);
+//           if (result) {
+//             return done(null, user);
+//           } else {
+//             return done(null, false, { message: "Invalid password" });
+//           }
+//         })
+//         .catch((error) => {
+//           console.log(error);
+//           return done(null, false, {
+//             message: "This email is not registered",
+//           });
+//         });
+//     }
+//   )
+// );
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -1287,6 +1324,18 @@ app.post(
   }),
   function (request, response) {
     response.redirect("/home");
+  }
+);
+
+// voter login session
+app.post(
+  "/election/:id/vote/login",
+  passport.authenticate("local", {
+    failureRedirect: `/`,
+    failureFlash: true,
+  }),
+  function (request, response) {
+    response.redirect(`/election/${request.params.id}/vote`);
   }
 );
 
