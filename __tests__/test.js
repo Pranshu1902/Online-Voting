@@ -386,6 +386,32 @@ describe("first", () => {
     expect(res.statusCode).toBe(302);
   });
 
+  test("end election and check results page", async () => {
+    login();
+    let count;
+    const response = await agent.get("/election");
+    count = response.body.elections.length;
+
+    const electionID = response.body.elections[count - 1].id;
+
+    // end the election
+    const res = await agent.get(`/election/${electionID}`);
+    const token3 = extractCsrfToken(res);
+
+    const endRes = await agent.put(`/election/${electionID}/end`).send({
+      _csrf: token3,
+    });
+
+    expect(endRes.ok).toBe(true);
+
+    // logout admin
+    await agent.get("/signout");
+
+    // vote page redirects to results page
+    const result = await agent.get(`/election/${electionID}/vote`);
+    expect(result.statusCode).toBe(302);
+  });
+
   test("signout admin", async () => {
     login();
     await agent.get("/signout");
