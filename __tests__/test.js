@@ -273,22 +273,10 @@ describe("first", () => {
     const questionCount = questions._body.length;
     const questionID = questions._body[questionCount - 1].id;
 
-    // const res = await agent.get(`/election/${electionID}`);
-    // const token = extractCsrfToken(res);
-
-    // const addOptionRes = await agent
-    //   .post(`/election/${electionID}/question/${questionID}/options/add`)
-    //   .send({
-    //     option: "Option New",
-    //     _csrf: token,
-    //   });
-
-    // expect(addOptionRes.statusCode).toBe(302);
-
     const optionsRes = await agent.get(
       `/election/${electionID}/question/${questionID}/options`
     );
-    const options = optionsRes.text;
+    const options = optionsRes._body;
     const optionCount = options.length;
     const optionID = options[optionCount - 1].id;
 
