@@ -38,7 +38,13 @@
         <% } else { %>
             <div class="flex flex-col gap-4">
             <% if (verified) { %>
-              <%- include ('Ballot.ejs', {election: election, voter: voter}) %>
+              <% if (voter.voted) { %>
+                  <div class="flex justify-center">
+                      <p class="text-2xl text-gray-600">Thank you for voting.</p>
+                  </div>
+              <% } else { %>
+                <%- include ('Ballot.ejs', {election: election, voter: voter}) %>
+              <% } %>                
             <% } else { %>
               <%- include ('voterLogin.ejs', {election: election}) %>
             <% } %>
