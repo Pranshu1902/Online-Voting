@@ -787,6 +787,7 @@ app.post(
     const sameQuestion = await question.findOne({
       where: {
         title: request.body.title,
+        description: request.body.description,
         electionID: request.params.electionID,
       },
     });
@@ -1221,12 +1222,12 @@ app.get(
 
     const election = await Election.findByPk(request.params.id);
 
-    // if admin logged in
-    if (request.user && request.user.id) {
+    // if admin logged in and not voter logged in
+    if (request.user && request.user.id && !request.user.voterID) {
       const adminID = request.user.id;
       const admin = await Admin.findByPk(adminID);
 
-      if (adminID !== election.adminID) {
+      if (adminID !== election.adminID && !election.ended) {
         return response.send("You are not authorized to view this page");
       }
 
