@@ -6,6 +6,8 @@ One shot platform to host elections, add voters, and view results graphs
 
 [![MIT License](https://img.shields.io/badge/Platform-Deployed-green.svg)](https://choosealicense.com/licenses/mit/)
 
+Live Site link: https://online-voting-pranshu1902.onrender.com/
+
 ## Demo
 
 Loom Video link
