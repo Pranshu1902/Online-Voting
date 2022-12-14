@@ -10,7 +10,7 @@ Deployed App link: https://online-voting-pranshu1902.onrender.com/
 
 ## Demo
 
-Loom Video link
+https://www.loom.com/share/deb47f3ff51347fb841f7254e3a7a6d7
 
 ## Features
 
