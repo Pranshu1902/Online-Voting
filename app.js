@@ -245,7 +245,7 @@ app.post(
   "/election",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    if (!request.body.name) {
+    if (request.body.name.trim().length === 0) {
       request.flash("error", "Election name can't be empty");
       return response.redirect("/elections/new");
     }
@@ -323,6 +323,11 @@ app.post(
       });
     }
 
+    // validation checks
+    if (request.body.name.trim().length === 0) {
+      request.flash("error", "Election name can't be empty");
+      return response.redirect(`/election/${request.params.id}/edit`);
+    }
     const sameElection = await Election.findOne({
       where: {
         adminID: loggedInAdminID,
@@ -356,7 +361,7 @@ app.post(
 // create new admin user
 app.post("/users", async (request, response) => {
   // validation checks
-  if (request.body.email.length === 0) {
+  if (request.body.email.trim().length === 0) {
     request.flash("error", "Email can't be empty");
     return response.redirect("/signup");
   }
@@ -443,7 +448,7 @@ app.post(
     }
 
     // validation checks
-    if (request.body.title.length === 0) {
+    if (request.body.title.trim().length === 0) {
       request.flash("error", "Question title can't be empty");
       return response.redirect(`/election/${request.params.id}`);
     }
@@ -603,7 +608,7 @@ app.post(
     }
 
     // validation checks
-    if (request.body.option.length === 0) {
+    if (request.body.option.trim().length === 0) {
       request.flash("error", "Option can't be empty");
       return response.redirect(
         `/election/${request.params.electionID}/question/${request.params.questionID}`
@@ -787,6 +792,12 @@ app.post(
     }
 
     // validation checks
+    if (request.body.title.trim().length === 0) {
+      request.flash("error", "Question name cannot be empty");
+      return response.redirect(
+        `/election/${request.params.electionID}/question/${request.params.questionID}/edit`
+      );
+    }
     const sameQuestion = await question.findOne({
       where: {
         title: request.body.title,
@@ -879,7 +890,7 @@ app.post(
     }
 
     // validation checks
-    if (request.body.voterID.length === 0) {
+    if (request.body.voterID.trim().length === 0) {
       request.flash("voterError", "Voter ID can't be empty");
       return response.redirect(`/election/${request.params.id}`);
     }
@@ -1008,6 +1019,14 @@ app.post(
       return response.render("error", {
         errorMessage: "Invalid request, election is already launched",
       });
+    }
+
+    // validation checks
+    if (request.body.value.trim().length === 0) {
+      request.flash("error", "Option can't be empty");
+      return response.redirect(
+        `/election/${request.params.electionID}/question/${request.params.questionID}/option/${request.params.optionID}/edit`
+      );
     }
 
     const sameOption = await Option.findOne({
