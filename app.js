@@ -1093,7 +1093,8 @@ app.get("/election/:id/vote", async (request, response) => {
     options.push(allOption);
   }
 
-  if (request.user && request.user.id) {
+  // voter logged in
+  if (request.user && request.user.id && request.user.voterID) {
     const voter = await Voter.findByPk(request.user.id);
 
     response.render("vote", {
