@@ -77,9 +77,12 @@ passport.use(
     {
       usernameField: "voterID",
       passwordField: "password",
+      passReqToCallback: true,
     },
-    (username, password, done) => {
-      Voter.findOne({ where: { voterID: username } })
+    (request, username, password, done) => {
+      Voter.findOne({
+        where: { voterID: username, electionID: request.params.id },
+      })
         .then(async (voter) => {
           const result = await bcrypt.compare(password, voter.password);
           if (result) {
