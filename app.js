@@ -1121,7 +1121,10 @@ app.get("/election/:id/vote", async (request, response) => {
 // login voter
 app.post(
   "/election/:id/vote",
-  passport.authenticate("voter-local", { failureFlash: true }),
+  passport.authenticate("voter-local", {
+    failureRedirect: "back",
+    failureFlash: true,
+  }),
   function (request, response) {
     return response.redirect(`/election/${request.params.id}/vote`);
   }
